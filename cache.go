@@ -98,62 +98,62 @@ func move_last(it * Value_t, first ** Value_t, last ** Value_t) (* Value_t) {
 }
 
 type Cache struct {
-	dict map[interface{}]*Value_t
+	dict map[interface{}]Iterator
 	_first * Value_t
 	_last * Value_t
 }
 
 func New() (self * Cache) {
 	self = &Cache{}
-	self.dict = map[interface{}]*Value_t{}
+	self.dict = map[interface{}]Iterator{}
 	return
 }
 
-func (self * Cache) PushFront(key interface{}, value interface{}) (Iterator, bool) {
-	if it, ok := self.dict[key]; ok {
-		move_first(it, &self._first, &self._last)
-		return Iterator{it}, false
+func (self * Cache) PushFront(key interface{}, value interface{}) (it Iterator, ok bool) {
+	if it, ok = self.dict[key]; ok {
+		move_first(it.element, &self._first, &self._last)
+		return it, false
 	}
-	it := &Value_t{Key: key, Value: value}
+	it.element = &Value_t{Key: key, Value: value}
+	set_first(it.element, &self._first, &self._last)
 	self.dict[key] = it
-	set_first(it, &self._first, &self._last)
-	return Iterator{it}, true
+	return it, true
 }
 
-func (self * Cache) PushBack(key interface{}, value interface{}) (Iterator, bool) {
-	if it, ok := self.dict[key]; ok {
-		move_last(it, &self._first, &self._last)
-		return Iterator{it}, false
+func (self * Cache) PushBack(key interface{}, value interface{}) (it Iterator, ok bool) {
+	if it, ok = self.dict[key]; ok {
+		move_last(it.element, &self._first, &self._last)
+		return it, false
 	}
-	it := &Value_t{Key: key, Value: value}
+	it.element = &Value_t{Key: key, Value: value}
+	set_last(it.element, &self._first, &self._last)
 	self.dict[key] = it
-	set_last(it, &self._first, &self._last)
-	return Iterator{it}, true
+	return it, true
 }
 
 func (self * Cache) FindFront(key interface{}) (Iterator) {
 	if it, ok := self.dict[key]; ok {
-		move_first(it, &self._first, &self._last)
-		return Iterator{it}
+		move_first(it.element, &self._first, &self._last)
+		return it
 	}
 	return Iterator{nil}
 }
 
 func (self * Cache) FindBack(key interface{}) (Iterator) {
 	if it, ok := self.dict[key]; ok {
-		move_last(it, &self._first, &self._last)
-		return Iterator{it}
+		move_last(it.element, &self._first, &self._last)
+		return it
 	}
 	return Iterator{nil}
 }
 
 func (self * Cache) Find(key interface{}) (Iterator) {
-	return Iterator{self.dict[key]}
+	return self.dict[key]
 }
 
 func (self * Cache) Remove(key interface{}) {
 	if it, ok := self.dict[key]; ok {
-		cut_list(it, &self._first, &self._last)
+		cut_list(it.element, &self._first, &self._last)
 		delete(self.dict, key)
 	}
 }
