@@ -1,12 +1,10 @@
 //
-// Cache for Lite
 // Use exclusive lock for all operations
-// Name convention are taken from stl maps
 // Key = key_type, Value = mapped_type, struct{Key, Value} = value_type
 // to get Value from iterator use it.Mapped()
 // PushFront() and PushBack() return value is same as stl map::insert
-// iterator, true = new {key, value} inserted
-// intertor, false = key already exists, no changes made
+// {iterator, true} = inserted {key, value} 
+// {intertor, false} = key already exists, no changes made
 //
 
 package lite_cache
@@ -108,11 +106,11 @@ func (self * Cache) Remove(key interface{}) {
 	}
 }
 
-func (self * Cache) Front(line int) Iterator {
+func (self * Cache) Front() Iterator {
 	return Iterator{self.lru_list.Front()}
 }
 
-func (self * Cache) Back(line int) Iterator {
+func (self * Cache) Back() Iterator {
 	return Iterator{self.lru_list.Back()}
 }
 
