@@ -7,7 +7,7 @@
 // {intertor, false} = key already exists, no changes made
 //
 
-package lite_cache
+package cache
 
 import "container/list"
 
