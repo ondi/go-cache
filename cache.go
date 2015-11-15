@@ -3,7 +3,7 @@
 // PushFront() and PushBack() return value:
 // {iterator, true} = inserted {key, value}
 // {intertor, false} = key already exists, no changes made
-// iterate over cache: for i := c.Front(); i.Valid(); i = i.Next() {...}
+// iterate over cache: for i := c.Front(); i != c.End(); i = i.Next() {...}
 //
 
 package cache
