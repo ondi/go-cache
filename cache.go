@@ -31,10 +31,6 @@ func (self * Value_t) Update(value interface{}) {
 	self.value = value
 }
 
-func (self * Value_t) Valid() bool {
-	return self != nil
-}
-
 func (self * Value_t) Next() * Value_t {
 	return self._next
 }
@@ -43,92 +39,76 @@ func (self * Value_t) Prev() * Value_t {
 	return self._prev
 }
 
-// list must not be empty
-func cut_list(it * Value_t, first ** Value_t, last ** Value_t) * Value_t {
-	if it._prev == nil {
-		*first = it._next
-	} else {
-		it._prev._next = it._next
-	}
-	if it._next == nil {
-		*last = it._prev
-	} else {
-		it._next._prev = it._prev
-	}
-	return it
-}
-
-// list may be empty
-func set_first(it * Value_t, first ** Value_t, last ** Value_t) * Value_t {
+func cut_list(it * Value_t) * Value_t {
+	it._prev._next = it._next
+	it._next._prev = it._prev
 	it._prev = nil
-	it._next = *first
-	if *first == nil {
-		*last = it
-	} else {
-		(*first)._prev = it
-	}
-	*first = it
-	return it
-}
-
-// list may be empty
-func set_last(it * Value_t, first ** Value_t, last ** Value_t) * Value_t {
 	it._next = nil
-	it._prev = *last
-	if *last == nil {
-		*first = it
-	} else {
-		(*last)._next = it
-	}
-	*last = it
 	return it
 }
 
-func move_first(it * Value_t, first ** Value_t, last ** Value_t) * Value_t {
-	return set_first(cut_list(it, first, last), first, last)
+func set_before(it * Value_t, at * Value_t) * Value_t {
+	it._prev = at._prev
+	at._prev = it
+	it._prev._next = it
+	it._next = at
+	return it
 }
 
-func move_last(it * Value_t, first ** Value_t, last ** Value_t) * Value_t {
-	return set_last(cut_list(it, first, last), first, last)
+func set_after(it * Value_t, at * Value_t) * Value_t {
+	it._next = at._next
+	at._next = it;
+	it._next._prev = it
+	it._prev = at
+	return it
+}
+
+func move_first(it * Value_t, root * Value_t) * Value_t {
+	return set_after(cut_list(it), root)
+}
+
+func move_last(it * Value_t, root * Value_t) * Value_t {
+	return set_before(cut_list(it), root)
 }
 
 type Cache struct {
 	dict map[interface{}]*Value_t
-	_first * Value_t
-	_last * Value_t
+	_root Value_t
 }
 
 func New() (self * Cache) {
 	self = &Cache{}
 	self.dict = map[interface{}]*Value_t{}
+	self._root._prev = &self._root
+	self._root._next = &self._root
 	return
 }
 
 func (self * Cache) PushFront(key interface{}, value interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		move_first(it, &self._first, &self._last)
+		move_first(it, &self._root)
 		return it, false
 	}
 	it = &Value_t{key: key, value: value}
-	set_first(it, &self._first, &self._last)
+	set_after(it, &self._root)
 	self.dict[key] = it
 	return it, true
 }
 
 func (self * Cache) PushBack(key interface{}, value interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		move_last(it, &self._first, &self._last)
+		move_last(it, &self._root)
 		return it, false
 	}
 	it = &Value_t{key: key, value: value}
-	set_last(it, &self._first, &self._last)
+	set_before(it, &self._root)
 	self.dict[key] = it
 	return it, true
 }
 
 func (self * Cache) FindFront(key interface{}) * Value_t {
 	if it, ok := self.dict[key]; ok {
-		move_first(it, &self._first, &self._last)
+		move_first(it, &self._root)
 		return it
 	}
 	return nil
@@ -136,7 +116,7 @@ func (self * Cache) FindFront(key interface{}) * Value_t {
 
 func (self * Cache) FindBack(key interface{}) * Value_t {
 	if it, ok := self.dict[key]; ok {
-		move_last(it, &self._first, &self._last)
+		move_last(it, &self._root)
 		return it
 	}
 	return nil
@@ -148,17 +128,21 @@ func (self * Cache) Find(key interface{}) * Value_t {
 
 func (self * Cache) Remove(key interface{}) {
 	if it, ok := self.dict[key]; ok {
-		cut_list(it, &self._first, &self._last)
+		cut_list(it)
 		delete(self.dict, key)
 	}
 }
 
 func (self * Cache) Front() * Value_t {
-	return self._first
+	return self._root._next
 }
 
 func (self * Cache) Back() * Value_t {
-	return self._last
+	return self._root._prev
+}
+
+func (self * Cache) End() * Value_t {
+	return &self._root
 }
 
 func (self * Cache) Size() (int) {
