@@ -63,12 +63,12 @@ func set_after(it * Value_t, at * Value_t) * Value_t {
 	return it
 }
 
-func move_first(it * Value_t, root * Value_t) * Value_t {
-	return set_after(cut_list(it), root)
+func move_after(it * Value_t, at * Value_t) * Value_t {
+	return set_after(cut_list(it), at)
 }
 
-func move_last(it * Value_t, root * Value_t) * Value_t {
-	return set_before(cut_list(it), root)
+func move_before(it * Value_t, at * Value_t) * Value_t {
+	return set_before(cut_list(it), at)
 }
 
 type Cache struct {
@@ -87,7 +87,7 @@ func New() (self * Cache) {
 
 func (self * Cache) PushFront(key interface{}, value interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		move_first(it, self._root)
+		move_after(it, self._root)
 		return it, false
 	}
 	it = &Value_t{key: key, value: value}
@@ -98,7 +98,7 @@ func (self * Cache) PushFront(key interface{}, value interface{}) (it * Value_t,
 
 func (self * Cache) PushBack(key interface{}, value interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		move_last(it, self._root)
+		move_before(it, self._root)
 		return it, false
 	}
 	it = &Value_t{key: key, value: value}
@@ -109,7 +109,7 @@ func (self * Cache) PushBack(key interface{}, value interface{}) (it * Value_t, 
 
 func (self * Cache) FindFront(key interface{}) * Value_t {
 	if it, ok := self.dict[key]; ok {
-		move_first(it, self._root)
+		move_after(it, self._root)
 		return it
 	}
 	return self.End()
@@ -117,7 +117,7 @@ func (self * Cache) FindFront(key interface{}) * Value_t {
 
 func (self * Cache) FindBack(key interface{}) * Value_t {
 	if it, ok := self.dict[key]; ok {
-		move_last(it, self._root)
+		move_before(it, self._root)
 		return it
 	}
 	return self.End()
