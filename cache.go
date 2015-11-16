@@ -73,53 +73,54 @@ func move_last(it * Value_t, root * Value_t) * Value_t {
 
 type Cache struct {
 	dict map[interface{}]*Value_t
-	_root Value_t
+	_root * Value_t
 }
 
 func New() (self * Cache) {
 	self = &Cache{}
 	self.dict = map[interface{}]*Value_t{}
-	self._root._prev = &self._root
-	self._root._next = &self._root
+	self._root = &Value_t{}
+	self._root._prev = self._root
+	self._root._next = self._root
 	return
 }
 
 func (self * Cache) PushFront(key interface{}, value interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		move_first(it, &self._root)
+		move_first(it, self._root)
 		return it, false
 	}
 	it = &Value_t{key: key, value: value}
-	set_after(it, &self._root)
+	set_after(it, self._root)
 	self.dict[key] = it
 	return it, true
 }
 
 func (self * Cache) PushBack(key interface{}, value interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		move_last(it, &self._root)
+		move_last(it, self._root)
 		return it, false
 	}
 	it = &Value_t{key: key, value: value}
-	set_before(it, &self._root)
+	set_before(it, self._root)
 	self.dict[key] = it
 	return it, true
 }
 
 func (self * Cache) FindFront(key interface{}) * Value_t {
 	if it, ok := self.dict[key]; ok {
-		move_first(it, &self._root)
+		move_first(it, self._root)
 		return it
 	}
-	return nil
+	return self.End()
 }
 
 func (self * Cache) FindBack(key interface{}) * Value_t {
 	if it, ok := self.dict[key]; ok {
-		move_last(it, &self._root)
+		move_last(it, self._root)
 		return it
 	}
-	return nil
+	return self.End()
 }
 
 func (self * Cache) Find(key interface{}) * Value_t {
@@ -142,7 +143,7 @@ func (self * Cache) Back() * Value_t {
 }
 
 func (self * Cache) End() * Value_t {
-	return &self._root
+	return self._root
 }
 
 func (self * Cache) Size() (int) {
