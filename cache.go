@@ -124,7 +124,10 @@ func (self * Cache) FindBack(key interface{}) * Value_t {
 }
 
 func (self * Cache) Find(key interface{}) * Value_t {
-	return self.dict[key]
+	if it, ok := self.dict[key]; ok {
+		return it
+	}
+	return self.End()
 }
 
 func (self * Cache) Remove(key interface{}) {
