@@ -1,6 +1,6 @@
 //
 // Use exclusive lock for all operations
-// PushFront() and PushBack() return value:
+// PushFront() and PushBack() output:
 // {iterator, true} = inserted {key, value}
 // {intertor, false} = key already exists, no changes made
 // iterate over cache: for i := c.Front(); i != c.End(); i = i.Next() {...}
@@ -42,8 +42,8 @@ func (self * Value_t) Prev() * Value_t {
 func cut_list(it * Value_t) * Value_t {
 	it._prev._next = it._next
 	it._next._prev = it._prev
-	it._prev = nil
-	it._next = nil
+	it._prev = nil	// be on the safe side
+	it._next = nil	// be on the safe side
 	return it
 }
 
