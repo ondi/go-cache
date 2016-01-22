@@ -47,7 +47,7 @@ func cut_list(it * Value_t) * Value_t {
 
 func set_before(it * Value_t, at * Value_t) * Value_t {
 	it.prev = at.prev
-	it.prev.next = it
+	at.prev.next = it
 	at.prev = it
 	it.next = at
 	return it
@@ -55,7 +55,7 @@ func set_before(it * Value_t, at * Value_t) * Value_t {
 
 func set_after(it * Value_t, at * Value_t) * Value_t {
 	it.next = at.next
-	it.next.prev = it
+	at.next.prev = it
 	at.next = it;
 	it.prev = at
 	return it
