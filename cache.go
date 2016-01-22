@@ -11,8 +11,8 @@ package cache
 type Value_t struct {
 	key interface{}
 	value interface{}
-	_prev * Value_t
-	_next * Value_t
+	prev * Value_t
+	next * Value_t
 }
 
 func (self * Value_t) Key() interface{} {
@@ -32,34 +32,32 @@ func (self * Value_t) Update(value interface{}) {
 }
 
 func (self * Value_t) Next() * Value_t {
-	return self._next
+	return self.next
 }
 
 func (self * Value_t) Prev() * Value_t {
-	return self._prev
+	return self.prev
 }
 
 func cut_list(it * Value_t) * Value_t {
-	it._prev._next = it._next
-	it._next._prev = it._prev
-	it._prev = nil	// be on the safe side
-	it._next = nil	// be on the safe side
+	it.prev.next = it.next
+	it.next.prev = it.prev
 	return it
 }
 
 func set_before(it * Value_t, at * Value_t) * Value_t {
-	it._prev = at._prev
-	at._prev = it
-	it._prev._next = it
-	it._next = at
+	it.prev = at.prev
+	it.prev.next = it
+	at.prev = it
+	it.next = at
 	return it
 }
 
 func set_after(it * Value_t, at * Value_t) * Value_t {
-	it._next = at._next
-	at._next = it;
-	it._next._prev = it
-	it._prev = at
+	it.next = at.next
+	it.next.prev = it
+	at.next = it;
+	it.prev = at
 	return it
 }
 
@@ -80,8 +78,8 @@ func New() (self * Cache) {
 	self = &Cache{}
 	self.dict = map[interface{}]*Value_t{}
 	self._root = &Value_t{}
-	self._root._prev = self._root
-	self._root._next = self._root
+	self._root.prev = self._root
+	self._root.next = self._root
 	return
 }
 
@@ -138,11 +136,11 @@ func (self * Cache) Remove(key interface{}) {
 }
 
 func (self * Cache) Front() * Value_t {
-	return self._root._next
+	return self._root.next
 }
 
 func (self * Cache) Back() * Value_t {
-	return self._root._prev
+	return self._root.prev
 }
 
 func (self * Cache) End() * Value_t {
