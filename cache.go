@@ -10,7 +10,7 @@ package cache
 
 type Value_t struct {
 	key interface{}
-	value interface{}
+	mapped interface{}
 	prev * Value_t
 	next * Value_t
 }
@@ -20,15 +20,11 @@ func (self * Value_t) Key() interface{} {
 }
 
 func (self * Value_t) Mapped() interface{} {
-	return self.value
+	return self.mapped
 }
 
-func (self * Value_t) Value() Value_t {
-	return *self
-}
-
-func (self * Value_t) Update(value interface{}) {
-	self.value = value
+func (self * Value_t) Update(mapped interface{}) {
+	self.mapped = mapped
 }
 
 func (self * Value_t) Next() * Value_t {
@@ -88,7 +84,7 @@ func (self * Cache) PushFront(key interface{}, value interface{}) (it * Value_t,
 		move_after(it, self._root)
 		return it, false
 	}
-	it = &Value_t{key: key, value: value}
+	it = &Value_t{key: key, mapped: value}
 	set_after(it, self._root)
 	self.dict[key] = it
 	return it, true
@@ -99,7 +95,7 @@ func (self * Cache) PushBack(key interface{}, value interface{}) (it * Value_t, 
 		move_before(it, self._root)
 		return it, false
 	}
-	it = &Value_t{key: key, value: value}
+	it = &Value_t{key: key, mapped: value}
 	set_before(it, self._root)
 	self.dict[key] = it
 	return it, true
