@@ -67,43 +67,43 @@ func move_before(it * Value_t, at * Value_t) * Value_t {
 
 type Cache struct {
 	dict map[interface{}]*Value_t
-	_root * Value_t
+	root * Value_t
 }
 
 func New() (self * Cache) {
 	self = &Cache{}
 	self.dict = map[interface{}]*Value_t{}
-	self._root = &Value_t{}
-	self._root.prev = self._root
-	self._root.next = self._root
+	self.root = &Value_t{}
+	self.root.prev = self.root
+	self.root.next = self.root
 	return
 }
 
 func (self * Cache) PushFront(key interface{}, value interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		move_after(it, self._root)
+		move_after(it, self.root)
 		return it, false
 	}
 	it = &Value_t{key: key, mapped: value}
-	set_after(it, self._root)
+	set_after(it, self.root)
 	self.dict[key] = it
 	return it, true
 }
 
 func (self * Cache) PushBack(key interface{}, value interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		move_before(it, self._root)
+		move_before(it, self.root)
 		return it, false
 	}
 	it = &Value_t{key: key, mapped: value}
-	set_before(it, self._root)
+	set_before(it, self.root)
 	self.dict[key] = it
 	return it, true
 }
 
 func (self * Cache) FindFront(key interface{}) * Value_t {
 	if it, ok := self.dict[key]; ok {
-		move_after(it, self._root)
+		move_after(it, self.root)
 		return it
 	}
 	return self.End()
@@ -111,7 +111,7 @@ func (self * Cache) FindFront(key interface{}) * Value_t {
 
 func (self * Cache) FindBack(key interface{}) * Value_t {
 	if it, ok := self.dict[key]; ok {
-		move_before(it, self._root)
+		move_before(it, self.root)
 		return it
 	}
 	return self.End()
@@ -132,15 +132,15 @@ func (self * Cache) Remove(key interface{}) {
 }
 
 func (self * Cache) Front() * Value_t {
-	return self._root.next
+	return self.root.next
 }
 
 func (self * Cache) Back() * Value_t {
-	return self._root.prev
+	return self.root.prev
 }
 
 func (self * Cache) End() * Value_t {
-	return self._root
+	return self.root
 }
 
 func (self * Cache) Size() (int) {
