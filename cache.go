@@ -143,6 +143,14 @@ func (self * Cache) End() * Value_t {
 	return self.root
 }
 
+func (self * Cache) SetFront(it * Value_t) {
+	set_before(cut_list(it), self.root)
+}
+
+func (self * Cache) SetBack(it * Value_t) {
+	set_before(cut_list(it), self.root)
+}
+
 func (self * Cache) Size() (int) {
 	return len(self.dict)
 }
