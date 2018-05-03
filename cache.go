@@ -57,14 +57,6 @@ func set_after(it * Value_t, at * Value_t) * Value_t {
 	return it
 }
 
-func move_after(it * Value_t, at * Value_t) * Value_t {
-	return set_after(cut_list(it), at)
-}
-
-func move_before(it * Value_t, at * Value_t) * Value_t {
-	return set_before(cut_list(it), at)
-}
-
 type Cache struct {
 	dict map[interface{}]*Value_t
 	root * Value_t
@@ -81,7 +73,7 @@ func New() (self * Cache) {
 
 func (self * Cache) PushFront(key interface{}, value interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		move_after(it, self.root)
+		set_after(cut_list(it), self.root)
 		return it, false
 	}
 	it = &Value_t{key: key, mapped: value}
@@ -92,7 +84,7 @@ func (self * Cache) PushFront(key interface{}, value interface{}) (it * Value_t,
 
 func (self * Cache) PushBack(key interface{}, value interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		move_before(it, self.root)
+		set_before(cut_list(it), self.root)
 		return it, false
 	}
 	it = &Value_t{key: key, mapped: value}
@@ -103,7 +95,7 @@ func (self * Cache) PushBack(key interface{}, value interface{}) (it * Value_t, 
 
 func (self * Cache) FindFront(key interface{}) * Value_t {
 	if it, ok := self.dict[key]; ok {
-		move_after(it, self.root)
+		set_after(cut_list(it), self.root)
 		return it
 	}
 	return self.End()
@@ -111,7 +103,7 @@ func (self * Cache) FindFront(key interface{}) * Value_t {
 
 func (self * Cache) FindBack(key interface{}) * Value_t {
 	if it, ok := self.dict[key]; ok {
-		move_before(it, self.root)
+		set_before(cut_list(it), self.root)
 		return it
 	}
 	return self.End()
@@ -143,12 +135,12 @@ func (self * Cache) End() * Value_t {
 	return self.root
 }
 
-func (self * Cache) SetFront(it * Value_t) {
-	set_before(cut_list(it), self.root)
+func (self * Cache) SetAfter(it * Value_t, at * Value_t) {
+	set_after(cut_list(it), at)
 }
 
-func (self * Cache) SetBack(it * Value_t) {
-	set_before(cut_list(it), self.root)
+func (self * Cache) SetBefore(it * Value_t, at * Value_t) {
+	set_before(cut_list(it), at)
 }
 
 func (self * Cache) Size() (int) {
