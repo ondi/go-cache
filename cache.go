@@ -136,13 +136,17 @@ func (self * Cache) End() * Value_t {
 }
 
 func (self * Cache) SetAfter(it * Value_t, at * Value_t) {
-	set_after(cut_list(it), at)
+	if it != at {
+		set_after(cut_list(it), at)
+	}
 }
 
 func (self * Cache) SetBefore(it * Value_t, at * Value_t) {
-	set_before(cut_list(it), at)
+	if it != at {
+		set_before(cut_list(it), at)
+	}
 }
 
-func (self * Cache) Size() (int) {
+func (self * Cache) Size() int {
 	return len(self.dict)
 }
