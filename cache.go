@@ -57,6 +57,18 @@ func set_after(it * Value_t, at * Value_t) * Value_t {
 	return it
 }
 
+func MoveAfter(it * Value_t, at * Value_t) {
+	if it != at {
+		set_after(cut_list(it), at)
+	}
+}
+
+func MoveBefore(it * Value_t, at * Value_t) {
+	if it != at {
+		set_before(cut_list(it), at)
+	}
+}
+
 type Cache struct {
 	dict map[interface{}]*Value_t
 	root * Value_t
@@ -133,18 +145,6 @@ func (self * Cache) Back() * Value_t {
 
 func (self * Cache) End() * Value_t {
 	return self.root
-}
-
-func (self * Cache) SetAfter(it * Value_t, at * Value_t) {
-	if it != at {
-		set_after(cut_list(it), at)
-	}
-}
-
-func (self * Cache) SetBefore(it * Value_t, at * Value_t) {
-	if it != at {
-		set_before(cut_list(it), at)
-	}
 }
 
 func (self * Cache) Size() int {
