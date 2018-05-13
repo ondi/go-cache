@@ -57,6 +57,22 @@ func set_after(it * Value_t, at * Value_t) * Value_t {
 	return it
 }
 
+// do not Swap with End()
+func Swap(a * Value_t, b * Value_t) {
+	temp := a.prev
+	a.prev = b.prev
+	b.prev = temp
+	
+	temp = a.next
+	a.next = b.next
+	b.next = temp
+	
+	a.next.prev = a
+	a.prev.next = a
+	b.next.prev = b
+	b.prev.next = b
+}
+
 func MoveAfter(it * Value_t, at * Value_t) {
 	if it != at {
 		set_after(cut_list(it), at)
