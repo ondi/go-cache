@@ -92,29 +92,29 @@ func Swap(a * Value_t, b * Value_t) {
 	b.next = temp
 }
 
-type Less_t interface {
+type Less interface {
 	Less(a * Value_t, b * Value_t) bool
 }
 
 // descending sort for hot side of cache goes almost linear
-func InsertionSortForward(begin * Value_t, end * Value_t, less Less_t) {
+func InsertionSortForward(begin * Value_t, end * Value_t, less Less) {
 	it1 := begin.Next()
 	for it1 != end {
 		it2 := it1
 		it1 = it1.Next()
-		for it2 != end && it2.Prev() != end && less.Less(it2, it2.Prev()) {
+		for it2.Prev() != end && less.Less(it2, it2.Prev()) {
 			MoveBefore(it2, it2.Prev())
 		}
 	}
 }
 
 // ascending sort for cold side of cache goes almost linear
-func InsertionSortBackward(begin * Value_t, end * Value_t, less Less_t) {
+func InsertionSortBackward(begin * Value_t, end * Value_t, less Less) {
 	it1 := begin.Prev()
 	for it1 != end {
 		it2 := it1
 		it1 = it1.Prev()
-		for it2 != end && it2.Next() != end && less.Less(it2, it2.Next()) {
+		for it2.Next() != end && less.Less(it2, it2.Next()) {
 			MoveAfter(it2, it2.Next())
 		}
 	}
