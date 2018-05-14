@@ -15,6 +15,10 @@ type Value_t struct {
 	next * Value_t
 }
 
+type Less_t interface {
+	Less(a * Value_t, b * Value_t) bool
+}
+
 func (self * Value_t) Key() interface{} {
 	return self.key
 }
@@ -57,6 +61,7 @@ func set_after(it * Value_t, at * Value_t) * Value_t {
 	return it
 }
 
+// very complicated
 func Swap(a * Value_t, b * Value_t) {
 	if a.next == b {
 		a.prev.next = b
@@ -90,34 +95,6 @@ func Swap(a * Value_t, b * Value_t) {
 	temp = a.next
 	a.next = b.next
 	b.next = temp
-}
-
-type Less interface {
-	Less(a * Value_t, b * Value_t) bool
-}
-
-// descending sort for hot side of cache goes almost linear
-func InsertionSortForward(begin * Value_t, end * Value_t, less Less) {
-	it1 := begin.Next()
-	for it1 != end {
-		it2 := it1
-		it1 = it1.Next()
-		for it2.Prev() != end && less.Less(it2, it2.Prev()) {
-			MoveBefore(it2, it2.Prev())
-		}
-	}
-}
-
-// ascending sort for cold side of cache goes almost linear
-func InsertionSortBackward(begin * Value_t, end * Value_t, less Less) {
-	it1 := begin.Prev()
-	for it1 != end {
-		it2 := it1
-		it1 = it1.Prev()
-		for it2.Next() != end && less.Less(it2, it2.Next()) {
-			MoveAfter(it2, it2.Next())
-		}
-	}
 }
 
 func MoveAfter(it * Value_t, at * Value_t) {
@@ -212,4 +189,40 @@ func (self * Cache) End() * Value_t {
 
 func (self * Cache) Size() int {
 	return len(self.dict)
+}
+
+// descending sort for hot side of cache goes almost linear
+func (self * Cache) InsertionSortFront(less Less_t) {
+	it1 := self.Front().Next()
+	for it1 != self.End() {
+		it2 := it1
+		it1 = it1.Next()
+		for it2.Prev() != self.End() && less.Less(it2, it2.Prev()) {
+			MoveBefore(it2, it2.Prev())
+		}
+	}
+}
+
+// ascending sort for cold side of cache goes almost linear
+func (self * Cache) InsertionSortBack(less Less_t) {
+	it1 := self.Back().Prev()
+	for it1 != self.End() {
+		it2 := it1
+		it1 = it1.Prev()
+		for it2.Next() != self.End() && less.Less(it2, it2.Next()) {
+			MoveAfter(it2, it2.Next())
+		}
+	}
+}
+
+type reverse struct {
+	Less_t
+}
+
+func (self * reverse) Less(a * Value_t, b * Value_t) bool {
+	return self.Less_t.Less(b, a)
+}
+
+func Reverse(less Less_t) Less_t {
+	return &reverse{less}
 }
