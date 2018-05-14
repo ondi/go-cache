@@ -57,8 +57,32 @@ func set_after(it * Value_t, at * Value_t) * Value_t {
 	return it
 }
 
-// do not Swap with End()
 func Swap(a * Value_t, b * Value_t) {
+	if a.next == b {
+		a.prev.next = b
+		b.next.prev = a
+		b.prev = a.prev
+		a.prev = b
+		a.next = b.next
+		b.next = a
+		return
+	}
+	
+	if a.prev == b {
+		a.next.prev = b
+		b.prev.next = a
+		b.next = a.next
+		a.next = b
+		a.prev = b.prev
+		b.prev = a
+		return
+	}
+	
+	a.next.prev = b
+	b.next.prev = a
+	a.prev.next = b
+	b.prev.next = a
+	
 	temp := a.prev
 	a.prev = b.prev
 	b.prev = temp
@@ -66,11 +90,34 @@ func Swap(a * Value_t, b * Value_t) {
 	temp = a.next
 	a.next = b.next
 	b.next = temp
-	
-	a.next.prev = a
-	a.prev.next = a
-	b.next.prev = b
-	b.prev.next = b
+}
+
+type Less_t interface {
+	Less(a * Value_t, b * Value_t) bool
+}
+
+// descending sort for hot side of cache goes almost linear
+func InsertionSortForward(begin * Value_t, end * Value_t, less Less_t) {
+	it1 := begin.Next()
+	for it1 != end {
+		it2 := it1
+		it1 = it1.Next()
+		for it2 != end && it2.Prev() != end && less.Less(it2, it2.Prev()) {
+			MoveBefore(it2, it2.Prev())
+		}
+	}
+}
+
+// ascending sort for cold side of cache goes almost linear
+func InsertionSortBackward(begin * Value_t, end * Value_t, less Less_t) {
+	it1 := begin.Prev()
+	for it1 != end {
+		it2 := it1
+		it1 = it1.Prev()
+		for it2 != end && it2.Next() != end && less.Less(it2, it2.Next()) {
+			MoveAfter(it2, it2.Next())
+		}
+	}
 }
 
 func MoveAfter(it * Value_t, at * Value_t) {
