@@ -123,9 +123,8 @@ func New() (self * Cache) {
 	return
 }
 
-func (self * Cache) PushFront(key interface{}, value interface{}) (it * Value_t, ok bool) {
+func (self * Cache) CreateFront(key interface{}, value interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		set_after(cut_list(it), self.root)
 		return it, false
 	}
 	it = &Value_t{key: key, mapped: value}
@@ -134,15 +133,28 @@ func (self * Cache) PushFront(key interface{}, value interface{}) (it * Value_t,
 	return it, true
 }
 
-func (self * Cache) PushBack(key interface{}, value interface{}) (it * Value_t, ok bool) {
+func (self * Cache) CreateBack(key interface{}, value interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		set_before(cut_list(it), self.root)
 		return it, false
 	}
 	it = &Value_t{key: key, mapped: value}
 	set_before(it, self.root)
 	self.dict[key] = it
 	return it, true
+}
+
+func (self * Cache) PushFront(key interface{}, value interface{}) (it * Value_t, ok bool) {
+	if it, ok = self.CreateFront(key, value); !ok {
+		set_after(cut_list(it), self.root)
+	}
+	return
+}
+
+func (self * Cache) PushBack(key interface{}, value interface{}) (it * Value_t, ok bool) {
+	if it, ok = self.CreateBack(key, value); !ok {
+		set_before(cut_list(it), self.root)
+	}
+	return
 }
 
 func (self * Cache) FindFront(key interface{}) * Value_t {
