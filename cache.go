@@ -116,11 +116,15 @@ type Cache_t struct {
 
 func New() (self * Cache_t) {
 	self = &Cache_t{}
+	self.Clear()
+	return
+}
+
+func (self * Cache_t) Clear() {
 	self.dict = map[interface{}]*Value_t{}
 	self.root = &Value_t{}
 	self.root.prev = self.root
 	self.root.next = self.root
-	return
 }
 
 func (self * Cache_t) CreateFront(key interface{}, value interface{}) (it * Value_t, ok bool) {
