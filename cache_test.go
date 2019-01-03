@@ -6,7 +6,7 @@ import "testing"
 type MyLess1_t struct {}
 
 func (* MyLess1_t) Less(a * Value_t, b * Value_t) bool {
-	return a.Key().(int) < b.Key().(int)
+	return a.Key.(int) < b.Key.(int)
 }
 
 func ExampleSort1() {
@@ -19,7 +19,7 @@ func ExampleSort1() {
 	
 	cc.InsertionSortFront(&MyLess1_t{})
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
-		fmt.Printf("%v\n", it.Key())
+		fmt.Printf("%v\n", it.Key)
 	}
 /* Output:
 9
@@ -40,7 +40,7 @@ func ExampleSort2() {
 	
 	cc.InsertionSortBack(&MyLess1_t{})
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
-		fmt.Printf("%v\n", it.Key())
+		fmt.Printf("%v\n", it.Key)
 	}
 /* Output:
 9

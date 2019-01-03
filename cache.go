@@ -8,27 +8,15 @@
 
 package cache
 
-type Value_t struct {
-	key interface{}
-	mapped interface{}
-	prev * Value_t
-	next * Value_t
-}
-
 type Less_t interface {
 	Less(a * Value_t, b * Value_t) bool
 }
 
-func (self * Value_t) Key() interface{} {
-	return self.key
-}
-
-func (self * Value_t) Mapped() interface{} {
-	return self.mapped
-}
-
-func (self * Value_t) Update(mapped interface{}) {
-	self.mapped = mapped
+type Value_t struct {
+	Key interface{}
+	Value interface{}
+	prev * Value_t
+	next * Value_t
 }
 
 func (self * Value_t) Next() * Value_t {
@@ -131,7 +119,7 @@ func (self * Cache_t) CreateFront(key interface{}, value interface{}) (it * Valu
 	if it, ok = self.dict[key]; ok {
 		return it, false
 	}
-	it = &Value_t{key: key, mapped: value}
+	it = &Value_t{Key: key, Value: value}
 	set_after(it, self.root)
 	self.dict[key] = it
 	return it, true
@@ -141,7 +129,7 @@ func (self * Cache_t) CreateBack(key interface{}, value interface{}) (it * Value
 	if it, ok = self.dict[key]; ok {
 		return it, false
 	}
-	it = &Value_t{key: key, mapped: value}
+	it = &Value_t{Key: key, Value: value}
 	set_before(it, self.root)
 	self.dict[key] = it
 	return it, true
