@@ -199,16 +199,16 @@ func (self * Cache_t) Size() int {
 	return len(self.dict)
 }
 
-// descending sort for hot side of cache (or sorted before) goes almost linear
+// takes linear time if sorted before
 func (self * Cache_t) InsertionSortFront(less Less_t) {
 	for it1 := self.Front().Next(); it1 != self.End(); it1 = it1.Next() {
-		for it2 := it1; it2.Prev() != self.End() && less.Less(it2.Prev(), it2); {
+		for it2 := it1; it2.Prev() != self.End() && less.Less(it2, it2.Prev()); {
 			set_before(cut_list(it2), it2.Prev())
 		}
 	}
 }
 
-// ascending sort for cold side of cache (or sorted before) goes almost linear
+// takes linear time if sorted before
 func (self * Cache_t) InsertionSortBack(less Less_t) {
 	for it1 := self.Back().Prev(); it1 != self.End(); it1 = it1.Prev() {
 		for it2 := it1; it2.Next() != self.End() && less.Less(it2, it2.Next()); {
