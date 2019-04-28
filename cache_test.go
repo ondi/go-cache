@@ -22,11 +22,11 @@ func ExampleSort1() {
 		fmt.Printf("%v\n", it.Key())
 	}
 /* Output:
-9
-7
-5
-3
 1
+3
+5
+7
+9
 */
 }
 

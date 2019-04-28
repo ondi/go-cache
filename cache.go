@@ -14,13 +14,21 @@ type Less_t interface {
 
 type Value_t struct {
 	key interface{}
-	Value interface{}
+	value interface{}
 	prev * Value_t
 	next * Value_t
 }
 
 func (self * Value_t) Key() interface{} {
 	return self.key
+}
+
+func (self * Value_t) Value() interface{} {
+	return self.value
+}
+
+func (self * Value_t) Update(value interface{}) {
+	self.value = value
 }
 
 func (self * Value_t) Next() * Value_t {
@@ -123,7 +131,7 @@ func (self * Cache_t) CreateFront(key interface{}, value interface{}) (it * Valu
 	if it, ok = self.dict[key]; ok {
 		return it, false
 	}
-	it = &Value_t{key: key, Value: value}
+	it = &Value_t{key: key, value: value}
 	set_after(it, self.root)
 	self.dict[key] = it
 	return it, true
@@ -133,7 +141,7 @@ func (self * Cache_t) CreateBack(key interface{}, value interface{}) (it * Value
 	if it, ok = self.dict[key]; ok {
 		return it, false
 	}
-	it = &Value_t{key: key, Value: value}
+	it = &Value_t{key: key, value: value}
 	set_before(it, self.root)
 	self.dict[key] = it
 	return it, true
