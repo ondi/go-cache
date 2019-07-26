@@ -97,6 +97,18 @@ func Swap(a * Value_t, b * Value_t) {
 	b.next = temp
 }
 
+func MoveAfter(it * Value_t, at * Value_t) {
+	if it != at {
+		set_after(cut_list(it), at)
+	}
+}
+
+func MoveBefore(it * Value_t, at * Value_t) {
+	if it != at {
+		set_before(cut_list(it), at)
+	}
+}
+
 type Cache_t struct {
 	dict map[interface{}]*Value_t
 	root * Value_t
