@@ -132,18 +132,18 @@ func (self * Cache_t) CreateFront(key interface{}, value func() interface{}) (it
 		return it, false
 	}
 	it = &Value_t{key: key, value: value()}
-	set_after(it, self.root)
 	self.dict[key] = it
+	set_after(it, self.root)
 	return it, true
 }
 
-func (self * Cache_t) CreateBack(key interface{}, value func () interface{}) (it * Value_t, ok bool) {
+func (self * Cache_t) CreateBack(key interface{}, value func() interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		return it, false
 	}
 	it = &Value_t{key: key, value: value()}
-	set_before(it, self.root)
 	self.dict[key] = it
+	set_before(it, self.root)
 	return it, true
 }
 
@@ -163,25 +163,25 @@ func (self * Cache_t) PushBack(key interface{}, value func() interface{}) (it * 
 
 func (self * Cache_t) UpdateFront(key interface{}, value interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		set_after(cut_list(it), self.root)
 		it.Update(value)
+		set_after(cut_list(it), self.root)
 		return it, false
 	}
 	it = &Value_t{key: key, value: value}
-	set_after(it, self.root)
 	self.dict[key] = it
+	set_after(it, self.root)
 	return it, true
 }
 
 func (self * Cache_t) UpdateBack(key interface{}, value interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		set_before(cut_list(it), self.root)
 		it.Update(value)
+		set_before(cut_list(it), self.root)
 		return it, false
 	}
 	it = &Value_t{key: key, value: value}
-	set_before(it, self.root)
 	self.dict[key] = it
+	set_before(it, self.root)
 	return it, true
 }
 
