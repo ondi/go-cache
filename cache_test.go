@@ -11,11 +11,11 @@ func (* MyLess1_t) Less(a * Value_t, b * Value_t) bool {
 
 func ExampleSort1() {
 	cc := New()
-	cc.PushFront(1, 10)
-	cc.PushFront(5, 50)
-	cc.PushFront(9, 90)
-	cc.PushFront(7, 70)
-	cc.PushFront(3, 30)
+	cc.UpdateFront(1, 10)
+	cc.UpdateFront(5, 50)
+	cc.UpdateFront(9, 90)
+	cc.UpdateFront(7, 70)
+	cc.UpdateFront(3, 30)
 	
 	cc.InsertionSortFront(&MyLess1_t{})
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
@@ -32,11 +32,11 @@ func ExampleSort1() {
 
 func ExampleSort2() {
 	cc := New()
-	cc.PushFront(1, 10)
-	cc.PushFront(5, 50)
-	cc.PushFront(9, 90)
-	cc.PushFront(7, 70)
-	cc.PushFront(3, 30)
+	cc.UpdateFront(1, 10)
+	cc.UpdateFront(5, 50)
+	cc.UpdateFront(9, 90)
+	cc.UpdateFront(7, 70)
+	cc.UpdateFront(3, 30)
 	
 	cc.InsertionSortBack(&MyLess1_t{})
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
