@@ -161,25 +161,25 @@ func (self * Cache_t) PushBack(key interface{}, value func() interface{}) (it * 
 	return
 }
 
-func (self * Cache_t) UpdateFront(key interface{}, value interface{}) (it * Value_t, ok bool) {
+func (self * Cache_t) UpdateFront(key interface{}, value func() interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		it.Update(value)
+		it.Update(value())
 		set_after(cut_list(it), self.root)
 		return it, false
 	}
-	it = &Value_t{key: key, value: value}
+	it = &Value_t{key: key, value: value()}
 	self.dict[key] = it
 	set_after(it, self.root)
 	return it, true
 }
 
-func (self * Cache_t) UpdateBack(key interface{}, value interface{}) (it * Value_t, ok bool) {
+func (self * Cache_t) UpdateBack(key interface{}, value func() interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
-		it.Update(value)
+		it.Update(value())
 		set_before(cut_list(it), self.root)
 		return it, false
 	}
-	it = &Value_t{key: key, value: value}
+	it = &Value_t{key: key, value: value()}
 	self.dict[key] = it
 	set_before(it, self.root)
 	return it, true

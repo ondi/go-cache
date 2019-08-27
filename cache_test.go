@@ -11,11 +11,12 @@ func (* MyLess1_t) Less(a * Value_t, b * Value_t) bool {
 
 func ExampleSort1() {
 	cc := New()
-	cc.UpdateFront(1, 10)
-	cc.UpdateFront(5, 50)
-	cc.UpdateFront(9, 90)
-	cc.UpdateFront(7, 70)
-	cc.UpdateFront(3, 30)
+	cc.CreateFront(1, func() interface{} {return 10})
+	cc.PushFront(5, func() interface{} {return 50})
+	cc.UpdateFront(9, func() interface{} {return 90})
+	cc.CreateFront(7, func() interface{} {return 70})
+	cc.PushFront(3, func() interface{} {return 30})
+	cc.UpdateFront(2, func() interface{} {return 20})
 	
 	cc.InsertionSortFront(&MyLess1_t{})
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
@@ -23,6 +24,7 @@ func ExampleSort1() {
 	}
 /* Output:
 1
+2
 3
 5
 7
@@ -32,11 +34,12 @@ func ExampleSort1() {
 
 func ExampleSort2() {
 	cc := New()
-	cc.UpdateFront(1, 10)
-	cc.UpdateFront(5, 50)
-	cc.UpdateFront(9, 90)
-	cc.UpdateFront(7, 70)
-	cc.UpdateFront(3, 30)
+	cc.CreateFront(1, func() interface{} {return 10})
+	cc.PushFront(5, func() interface{} {return 50})
+	cc.UpdateFront(9, func() interface{} {return 90})
+	cc.CreateFront(7, func() interface{} {return 70})
+	cc.PushFront(3, func() interface{} {return 30})
+	cc.UpdateFront(2, func() interface{} {return 20})
 	
 	cc.InsertionSortBack(&MyLess1_t{})
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
@@ -47,6 +50,7 @@ func ExampleSort2() {
 7
 5
 3
+2
 1
 */
 }
