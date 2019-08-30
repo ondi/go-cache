@@ -8,10 +8,6 @@
 
 package cache
 
-type Less_t interface {
-	Less(a * Value_t, b * Value_t) bool
-}
-
 type Value_t struct {
 	key interface{}
 	value interface{}
@@ -232,31 +228,35 @@ func (self * Cache_t) Size() int {
 }
 
 // takes linear time if sorted before
-func (self * Cache_t) InsertionSortFront(less Less_t) {
+func (self * Cache_t) InsertionSortFront(cmp Compare) {
 	for it1 := self.Front().Next(); it1 != self.End(); it1 = it1.Next() {
-		for it2 := it1; it2.Prev() != self.End() && less.Less(it2, it2.Prev()); {
+		for it2 := it1; it2.Prev() != self.End() && cmp.Less(it2, it2.Prev()); {
 			set_before(cut_list(it2), it2.Prev())
 		}
 	}
 }
 
 // takes linear time if sorted before
-func (self * Cache_t) InsertionSortBack(less Less_t) {
+func (self * Cache_t) InsertionSortBack(cmp Compare) {
 	for it1 := self.Back().Prev(); it1 != self.End(); it1 = it1.Prev() {
-		for it2 := it1; it2.Next() != self.End() && less.Less(it2, it2.Next()); {
+		for it2 := it1; it2.Next() != self.End() && cmp.Less(it2, it2.Next()); {
 			set_after(cut_list(it2), it2.Next())
 		}
 	}
 }
 
+type Compare interface {
+	Less(a * Value_t, b * Value_t) bool
+}
+
 type reverse struct {
-	Less_t
+	Compare
 }
 
 func (self * reverse) Less(a * Value_t, b * Value_t) bool {
-	return self.Less_t.Less(b, a)
+	return self.Less(b, a)
 }
 
-func Reverse(less Less_t) Less_t {
-	return &reverse{less}
+func Reverse(cmp Compare) Compare {
+	return &reverse{cmp}
 }
