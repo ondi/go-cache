@@ -204,11 +204,13 @@ func (self * Cache_t) Find(key interface{}) * Value_t {
 	return self.End()
 }
 
-func (self * Cache_t) Remove(key interface{}) {
-	if it, ok := self.dict[key]; ok {
+func (self * Cache_t) Remove(key interface{}) (ok bool) {
+	var it * Value_t
+	if it, ok = self.dict[key]; ok {
 		cut_list(it)
 		delete(self.dict, key)
 	}
+	return
 }
 
 func (self * Cache_t) Front() * Value_t {
