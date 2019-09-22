@@ -55,6 +55,26 @@ func ExampleSort2() {
 */
 }
 
-func Test1(t * testing.T) {
+func BenchmarkCache1(b * testing.B) {
+	c := New()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		c.CreateFront(i, func() interface{} {return i})
+	}
+}
 
+func BenchmarkCache2(b * testing.B) {
+	c := New()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		c.PushFront(i, func() interface{} {return i})
+	}
+}
+
+func BenchmarkCache3(b * testing.B) {
+	c := New()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		c.UpdateFront(i, func() interface{} {return i})
+	}
 }
