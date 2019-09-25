@@ -55,27 +55,25 @@ func ExampleSort20() {
 */
 }
 
+var c1 = New()
+var c2 = New()
+var c3 = New()
+
 func BenchmarkCache10(b * testing.B) {
-	var c1 = New()
-	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		c1.CreateFront(i, func() interface{} {return i})
+		c1.UpdateFront(i, func() interface{} {return i})
 	}
 }
 
 func BenchmarkCache20(b * testing.B) {
-	var c2 = New()
-	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		c2.PushFront(i, func() interface{} {return i})
+		c2.UpdateFront(i, func() interface{} {return i})
 	}
 }
 
 func BenchmarkCache30(b * testing.B) {
-	var c3 = New()
-	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		c3.UpdateFront(i, func() interface{} {return i})
