@@ -9,7 +9,7 @@ func (* MyLess1_t) Less(a * Value_t, b * Value_t) bool {
 	return a.Key().(int) < b.Key().(int)
 }
 
-func ExampleSort1() {
+func ExampleSort10() {
 	cc := New()
 	cc.CreateFront(1, func() interface{} {return 10})
 	cc.PushFront(5, func() interface{} {return 50})
@@ -32,7 +32,7 @@ func ExampleSort1() {
 */
 }
 
-func ExampleSort2() {
+func ExampleSort20() {
 	cc := New()
 	cc.CreateFront(1, func() interface{} {return 10})
 	cc.PushFront(5, func() interface{} {return 50})
@@ -55,26 +55,29 @@ func ExampleSort2() {
 */
 }
 
-func BenchmarkCache1(b * testing.B) {
-	c := New()
+func BenchmarkCache10(b * testing.B) {
+	var c1 = New()
+	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		c.CreateFront(i, func() interface{} {return i})
+		c1.CreateFront(i, func() interface{} {return i})
 	}
 }
 
-func BenchmarkCache2(b * testing.B) {
-	c := New()
+func BenchmarkCache20(b * testing.B) {
+	var c2 = New()
+	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		c.PushFront(i, func() interface{} {return i})
+		c2.PushFront(i, func() interface{} {return i})
 	}
 }
 
-func BenchmarkCache3(b * testing.B) {
-	c := New()
+func BenchmarkCache30(b * testing.B) {
+	var c3 = New()
+	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		c.UpdateFront(i, func() interface{} {return i})
+		c3.UpdateFront(i, func() interface{} {return i})
 	}
 }
