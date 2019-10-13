@@ -13,22 +13,20 @@ func ExampleSort10() {
 	cc := New()
 	cc.CreateFront(1, func() interface{} {return 10})
 	cc.PushFront(5, func() interface{} {return 50})
-	cc.UpdateFront(9, func() interface{} {return 90})
+	cc.UpdateFront(1, func(interface{}) interface{} {return 100})
 	cc.CreateFront(7, func() interface{} {return 70})
 	cc.PushFront(3, func() interface{} {return 30})
-	cc.UpdateFront(2, func() interface{} {return 20})
+	cc.UpdateFront(5, func(interface{}) interface{} {return 500})
 	
 	cc.InsertionSortFront(&MyLess1_t{})
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
-		fmt.Printf("%v\n", it.Key())
+		fmt.Printf("%v %v\n", it.Key(), it.Value())
 	}
 /* Output:
-1
-2
-3
-5
-7
-9
+1 100
+3 30
+5 500
+7 70
 */
 }
 
@@ -36,22 +34,20 @@ func ExampleSort20() {
 	cc := New()
 	cc.CreateFront(1, func() interface{} {return 10})
 	cc.PushFront(5, func() interface{} {return 50})
-	cc.UpdateFront(9, func() interface{} {return 90})
+	cc.UpdateFront(1, func(interface{}) interface{} {return 100})
 	cc.CreateFront(7, func() interface{} {return 70})
 	cc.PushFront(3, func() interface{} {return 30})
-	cc.UpdateFront(2, func() interface{} {return 20})
+	cc.UpdateFront(7, func(interface{}) interface{} {return 700})
 	
 	cc.InsertionSortBack(&MyLess1_t{})
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
-		fmt.Printf("%v\n", it.Key())
+		fmt.Printf("%v %v\n", it.Key(), it.Value())
 	}
 /* Output:
-9
-7
-5
-3
-2
-1
+7 700
+5 50
+3 30
+1 100
 */
 }
 
@@ -76,6 +72,6 @@ func BenchmarkCache20(b * testing.B) {
 func BenchmarkCache30(b * testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		c3.UpdateFront(i, func() interface{} {return i})
+		c3.UpdateFront(i, func(interface{}) interface{} {return i})
 	}
 }
