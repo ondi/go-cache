@@ -204,8 +204,7 @@ func (self * Cache_t) Find(key interface{}) * Value_t {
 	return self.End()
 }
 
-func (self * Cache_t) Remove(key interface{}) (ok bool) {
-	var it * Value_t
+func (self * Cache_t) Remove(key interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		delete(self.dict, key)
 		cut_list(it)
