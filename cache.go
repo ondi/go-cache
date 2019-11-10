@@ -181,27 +181,23 @@ func (self * Cache_t) UpdateBack(key interface{}, value func(interface{}) interf
 	return
 }
 
-func (self * Cache_t) FindFront(key interface{}) * Value_t {
-	if it, ok := self.dict[key]; ok {
+func (self * Cache_t) FindFront(key interface{}) (it * Value_t, ok bool) {
+	if it, ok = self.dict[key]; ok {
 		set_after(cut_list(it), self.root)
-		return it
 	}
-	return self.End()
+	return
 }
 
-func (self * Cache_t) FindBack(key interface{}) * Value_t {
-	if it, ok := self.dict[key]; ok {
+func (self * Cache_t) FindBack(key interface{}) (it * Value_t, ok bool) {
+	if it, ok = self.dict[key]; ok {
 		set_before(cut_list(it), self.root)
-		return it
 	}
-	return self.End()
+	return
 }
 
-func (self * Cache_t) Find(key interface{}) * Value_t {
-	if it, ok := self.dict[key]; ok {
-		return it
-	}
-	return self.End()
+func (self * Cache_t) Find(key interface{}) (it * Value_t, ok bool) {
+	it, ok = self.dict[key]
+	return
 }
 
 func (self * Cache_t) Remove(key interface{}) (it * Value_t, ok bool) {
