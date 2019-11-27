@@ -181,6 +181,13 @@ func (self * Cache_t) UpdateBack(key interface{}, value func(interface{}) interf
 	return
 }
 
+func (self * Cache_t) Update(key interface{}, value func(interface{}) interface{}) (it * Value_t, ok bool) {
+	if it, ok = self.dict[key]; ok {
+		it.value = value(it.value)
+	}
+	return
+}
+
 func (self * Cache_t) FindFront(key interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		set_after(cut_list(it), self.root)
