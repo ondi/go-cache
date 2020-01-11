@@ -133,6 +133,19 @@ func (self * Cache_t) CreateFront(key interface{}, value func() interface{}) (it
 	return it, true
 }
 
+func (self * Cache_t) CreateFront2(key interface{}, value func() (interface{}, error)) (it * Value_t, ok bool, err error) {
+	if it, ok = self.dict[key]; ok {
+		return it, false, nil
+	}
+	var v interface{}
+	if v, err = value(); err == nil {
+		it = &Value_t{key: key, value: v}
+		self.dict[key] = it
+		set_after(it, self.root)
+	}
+	return it, true, err
+}
+
 func (self * Cache_t) CreateBack(key interface{}, value func() interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		return it, false
@@ -141,6 +154,19 @@ func (self * Cache_t) CreateBack(key interface{}, value func() interface{}) (it 
 	self.dict[key] = it
 	set_before(it, self.root)
 	return it, true
+}
+
+func (self * Cache_t) CreateBack2(key interface{}, value func() (interface{}, error)) (it * Value_t, ok bool, err error) {
+	if it, ok = self.dict[key]; ok {
+		return it, false, nil
+	}
+	var v interface{}
+	if v, err = value(); err == nil {
+		it = &Value_t{key: key, value: v}
+		self.dict[key] = it
+		set_before(it, self.root)
+	}
+	return it, true, err
 }
 
 func (self * Cache_t) PushFront(key interface{}, value func() interface{}) (it * Value_t, ok bool) {
@@ -154,6 +180,20 @@ func (self * Cache_t) PushFront(key interface{}, value func() interface{}) (it *
 	return it, true
 }
 
+func (self * Cache_t) PushFront2(key interface{}, value func() (interface{}, error)) (it * Value_t, ok bool, err error) {
+	if it, ok = self.dict[key]; ok {
+		set_after(cut_list(it), self.root)
+		return it, false, nil
+	}
+	var v interface{}
+	if v, err = value(); err == nil {
+		it = &Value_t{key: key, value: v}
+		self.dict[key] = it
+		set_after(it, self.root)
+	}
+	return it, true, err
+}
+
 func (self * Cache_t) PushBack(key interface{}, value func() interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		set_before(cut_list(it), self.root)
@@ -165,10 +205,35 @@ func (self * Cache_t) PushBack(key interface{}, value func() interface{}) (it * 
 	return it, true
 }
 
+func (self * Cache_t) PushBack2(key interface{}, value func() (interface{}, error)) (it * Value_t, ok bool, err error) {
+	if it, ok = self.dict[key]; ok {
+		set_before(cut_list(it), self.root)
+		return it, false, nil
+	}
+	var v interface{}
+	if v, err = value(); err == nil {
+		it = &Value_t{key: key, value: v}
+		self.dict[key] = it
+		set_before(it, self.root)
+	}
+	return it, true, err
+}
+
 func (self * Cache_t) UpdateFront(key interface{}, value func(interface{}) interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		it.value = value(it.value)
 		set_after(cut_list(it), self.root)
+	}
+	return
+}
+
+func (self * Cache_t) UpdateFront2(key interface{}, value func(interface{}) (interface{}, error)) (it * Value_t, ok bool, err error) {
+	if it, ok = self.dict[key]; ok {
+		var v interface{}
+		if v, err = value(it.value); err == nil {
+			it.value = v
+			set_after(cut_list(it), self.root)
+		}
 	}
 	return
 }
@@ -181,9 +246,30 @@ func (self * Cache_t) UpdateBack(key interface{}, value func(interface{}) interf
 	return
 }
 
+func (self * Cache_t) UpdateBack2(key interface{}, value func(interface{}) (interface{}, error)) (it * Value_t, ok bool, err error) {
+	if it, ok = self.dict[key]; ok {
+		var v interface{}
+		if v, err = value(it.value); err == nil {
+			it.value = v
+			set_before(cut_list(it), self.root)
+		}
+	}
+	return
+}
+
 func (self * Cache_t) Update(key interface{}, value func(interface{}) interface{}) (it * Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		it.value = value(it.value)
+	}
+	return
+}
+
+func (self * Cache_t) Update2(key interface{}, value func(interface{}) (interface{}, error)) (it * Value_t, ok bool, err error) {
+	if it, ok = self.dict[key]; ok {
+		var v interface{}
+		if v, err = value(it.value); err == nil {
+			it.value = v
+		}
 	}
 	return
 }

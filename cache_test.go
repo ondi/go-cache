@@ -9,7 +9,7 @@ func (* MyLess1_t) Less(a * Value_t, b * Value_t) bool {
 	return a.Key().(int) < b.Key().(int)
 }
 
-func ExampleSort10() {
+func Example_sort10() {
 	cc := New()
 	cc.CreateFront(1, func() interface{} {return 10})
 	cc.PushFront(5, func() interface{} {return 50})
@@ -30,7 +30,7 @@ func ExampleSort10() {
 */
 }
 
-func ExampleSort20() {
+func Example_sort20() {
 	cc := New()
 	cc.CreateFront(1, func() interface{} {return 10})
 	cc.PushFront(5, func() interface{} {return 50})
@@ -55,21 +55,21 @@ var c1 = New()
 var c2 = New()
 var c3 = New()
 
-func BenchmarkCache10(b * testing.B) {
+func Benchmark_cache10(b * testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		c1.CreateFront(i, func() interface{} {return i})
 	}
 }
 
-func BenchmarkCache20(b * testing.B) {
+func Benchmark_cache20(b * testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		c2.PushFront(i, func() interface{} {return i})
 	}
 }
 
-func BenchmarkCache30(b * testing.B) {
+func Benchmark_cache30(b * testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		c3.UpdateFront(i, func(interface{}) interface{} {return i})
