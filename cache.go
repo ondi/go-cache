@@ -9,39 +9,39 @@
 package cache
 
 type Value_t struct {
-	key interface{}
+	key   interface{}
 	value interface{}
-	prev * Value_t
-	next * Value_t
+	prev  *Value_t
+	next  *Value_t
 }
 
-func (self * Value_t) Key() interface{} {
+func (self *Value_t) Key() interface{} {
 	return self.key
 }
 
-func (self * Value_t) Value() interface{} {
+func (self *Value_t) Value() interface{} {
 	return self.value
 }
 
-func (self * Value_t) Update(value interface{}) {
+func (self *Value_t) Update(value interface{}) {
 	self.value = value
 }
 
-func (self * Value_t) Next() * Value_t {
+func (self *Value_t) Next() *Value_t {
 	return self.next
 }
 
-func (self * Value_t) Prev() * Value_t {
+func (self *Value_t) Prev() *Value_t {
 	return self.prev
 }
 
-func cut_list(it * Value_t) * Value_t {
+func cut_list(it *Value_t) *Value_t {
 	it.prev.next = it.next
 	it.next.prev = it.prev
 	return it
 }
 
-func set_before(it * Value_t, at * Value_t) * Value_t {
+func set_before(it *Value_t, at *Value_t) *Value_t {
 	it.prev = at.prev
 	at.prev.next = it
 	at.prev = it
@@ -49,16 +49,16 @@ func set_before(it * Value_t, at * Value_t) * Value_t {
 	return it
 }
 
-func set_after(it * Value_t, at * Value_t) * Value_t {
+func set_after(it *Value_t, at *Value_t) *Value_t {
 	it.next = at.next
 	at.next.prev = it
-	at.next = it;
+	at.next = it
 	it.prev = at
 	return it
 }
 
 // very complicated
-func Swap(a * Value_t, b * Value_t) {
+func Swap(a *Value_t, b *Value_t) {
 	if a.next == b {
 		a.prev.next = b
 		b.next.prev = a
@@ -68,7 +68,7 @@ func Swap(a * Value_t, b * Value_t) {
 		b.next = a
 		return
 	}
-	
+
 	if a.prev == b {
 		a.next.prev = b
 		b.prev.next = a
@@ -78,52 +78,54 @@ func Swap(a * Value_t, b * Value_t) {
 		b.prev = a
 		return
 	}
-	
+
 	a.next.prev = b
 	b.next.prev = a
 	a.prev.next = b
 	b.prev.next = a
-	
+
 	temp := a.prev
 	a.prev = b.prev
 	b.prev = temp
-	
+
 	temp = a.next
 	a.next = b.next
 	b.next = temp
 }
 
-func MoveAfter(it * Value_t, at * Value_t) {
+func MoveAfter(it *Value_t, at *Value_t) *Value_t {
 	if it != at {
 		set_after(cut_list(it), at)
 	}
+	return it
 }
 
-func MoveBefore(it * Value_t, at * Value_t) {
+func MoveBefore(it *Value_t, at *Value_t) *Value_t {
 	if it != at {
 		set_before(cut_list(it), at)
 	}
+	return it
 }
 
 type Cache_t struct {
 	dict map[interface{}]*Value_t
-	root * Value_t
+	root *Value_t
 }
 
-func New() (self * Cache_t) {
+func New() (self *Cache_t) {
 	self = &Cache_t{}
 	self.Clear()
 	return
 }
 
-func (self * Cache_t) Clear() {
+func (self *Cache_t) Clear() {
 	self.dict = map[interface{}]*Value_t{}
 	self.root = &Value_t{}
 	self.root.prev = self.root
 	self.root.next = self.root
 }
 
-func (self * Cache_t) CreateFront(key interface{}, value func() interface{}) (it * Value_t, ok bool) {
+func (self *Cache_t) CreateFront(key interface{}, value func() interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		return it, false
 	}
@@ -133,7 +135,7 @@ func (self * Cache_t) CreateFront(key interface{}, value func() interface{}) (it
 	return it, true
 }
 
-func (self * Cache_t) CreateFront2(key interface{}, value func() (interface{}, error)) (it * Value_t, ok bool, err error) {
+func (self *Cache_t) CreateFront2(key interface{}, value func() (interface{}, error)) (it *Value_t, ok bool, err error) {
 	if it, ok = self.dict[key]; ok {
 		return it, false, nil
 	}
@@ -146,7 +148,7 @@ func (self * Cache_t) CreateFront2(key interface{}, value func() (interface{}, e
 	return it, true, err
 }
 
-func (self * Cache_t) CreateBack(key interface{}, value func() interface{}) (it * Value_t, ok bool) {
+func (self *Cache_t) CreateBack(key interface{}, value func() interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		return it, false
 	}
@@ -156,7 +158,7 @@ func (self * Cache_t) CreateBack(key interface{}, value func() interface{}) (it 
 	return it, true
 }
 
-func (self * Cache_t) CreateBack2(key interface{}, value func() (interface{}, error)) (it * Value_t, ok bool, err error) {
+func (self *Cache_t) CreateBack2(key interface{}, value func() (interface{}, error)) (it *Value_t, ok bool, err error) {
 	if it, ok = self.dict[key]; ok {
 		return it, false, nil
 	}
@@ -169,7 +171,7 @@ func (self * Cache_t) CreateBack2(key interface{}, value func() (interface{}, er
 	return it, true, err
 }
 
-func (self * Cache_t) PushFront(key interface{}, value func() interface{}) (it * Value_t, ok bool) {
+func (self *Cache_t) PushFront(key interface{}, value func() interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		set_after(cut_list(it), self.root)
 		return it, false
@@ -180,7 +182,7 @@ func (self * Cache_t) PushFront(key interface{}, value func() interface{}) (it *
 	return it, true
 }
 
-func (self * Cache_t) PushFront2(key interface{}, value func() (interface{}, error)) (it * Value_t, ok bool, err error) {
+func (self *Cache_t) PushFront2(key interface{}, value func() (interface{}, error)) (it *Value_t, ok bool, err error) {
 	if it, ok = self.dict[key]; ok {
 		set_after(cut_list(it), self.root)
 		return it, false, nil
@@ -194,7 +196,7 @@ func (self * Cache_t) PushFront2(key interface{}, value func() (interface{}, err
 	return it, true, err
 }
 
-func (self * Cache_t) PushBack(key interface{}, value func() interface{}) (it * Value_t, ok bool) {
+func (self *Cache_t) PushBack(key interface{}, value func() interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		set_before(cut_list(it), self.root)
 		return it, false
@@ -205,7 +207,7 @@ func (self * Cache_t) PushBack(key interface{}, value func() interface{}) (it * 
 	return it, true
 }
 
-func (self * Cache_t) PushBack2(key interface{}, value func() (interface{}, error)) (it * Value_t, ok bool, err error) {
+func (self *Cache_t) PushBack2(key interface{}, value func() (interface{}, error)) (it *Value_t, ok bool, err error) {
 	if it, ok = self.dict[key]; ok {
 		set_before(cut_list(it), self.root)
 		return it, false, nil
@@ -219,7 +221,7 @@ func (self * Cache_t) PushBack2(key interface{}, value func() (interface{}, erro
 	return it, true, err
 }
 
-func (self * Cache_t) UpdateFront(key interface{}, value func(interface{}) interface{}) (it * Value_t, ok bool) {
+func (self *Cache_t) UpdateFront(key interface{}, value func(interface{}) interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		it.value = value(it.value)
 		set_after(cut_list(it), self.root)
@@ -227,7 +229,7 @@ func (self * Cache_t) UpdateFront(key interface{}, value func(interface{}) inter
 	return
 }
 
-func (self * Cache_t) UpdateFront2(key interface{}, value func(interface{}) (interface{}, error)) (it * Value_t, ok bool, err error) {
+func (self *Cache_t) UpdateFront2(key interface{}, value func(interface{}) (interface{}, error)) (it *Value_t, ok bool, err error) {
 	if it, ok = self.dict[key]; ok {
 		var v interface{}
 		if v, err = value(it.value); err == nil {
@@ -238,7 +240,7 @@ func (self * Cache_t) UpdateFront2(key interface{}, value func(interface{}) (int
 	return
 }
 
-func (self * Cache_t) UpdateBack(key interface{}, value func(interface{}) interface{}) (it * Value_t, ok bool) {
+func (self *Cache_t) UpdateBack(key interface{}, value func(interface{}) interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		it.value = value(it.value)
 		set_before(cut_list(it), self.root)
@@ -246,7 +248,7 @@ func (self * Cache_t) UpdateBack(key interface{}, value func(interface{}) interf
 	return
 }
 
-func (self * Cache_t) UpdateBack2(key interface{}, value func(interface{}) (interface{}, error)) (it * Value_t, ok bool, err error) {
+func (self *Cache_t) UpdateBack2(key interface{}, value func(interface{}) (interface{}, error)) (it *Value_t, ok bool, err error) {
 	if it, ok = self.dict[key]; ok {
 		var v interface{}
 		if v, err = value(it.value); err == nil {
@@ -257,14 +259,14 @@ func (self * Cache_t) UpdateBack2(key interface{}, value func(interface{}) (inte
 	return
 }
 
-func (self * Cache_t) Update(key interface{}, value func(interface{}) interface{}) (it * Value_t, ok bool) {
+func (self *Cache_t) Update(key interface{}, value func(interface{}) interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		it.value = value(it.value)
 	}
 	return
 }
 
-func (self * Cache_t) Update2(key interface{}, value func(interface{}) (interface{}, error)) (it * Value_t, ok bool, err error) {
+func (self *Cache_t) Update2(key interface{}, value func(interface{}) (interface{}, error)) (it *Value_t, ok bool, err error) {
 	if it, ok = self.dict[key]; ok {
 		var v interface{}
 		if v, err = value(it.value); err == nil {
@@ -274,26 +276,26 @@ func (self * Cache_t) Update2(key interface{}, value func(interface{}) (interfac
 	return
 }
 
-func (self * Cache_t) FindFront(key interface{}) (it * Value_t, ok bool) {
+func (self *Cache_t) FindFront(key interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		set_after(cut_list(it), self.root)
 	}
 	return
 }
 
-func (self * Cache_t) FindBack(key interface{}) (it * Value_t, ok bool) {
+func (self *Cache_t) FindBack(key interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		set_before(cut_list(it), self.root)
 	}
 	return
 }
 
-func (self * Cache_t) Find(key interface{}) (it * Value_t, ok bool) {
+func (self *Cache_t) Find(key interface{}) (it *Value_t, ok bool) {
 	it, ok = self.dict[key]
 	return
 }
 
-func (self * Cache_t) Remove(key interface{}) (it * Value_t, ok bool) {
+func (self *Cache_t) Remove(key interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		delete(self.dict, key)
 		cut_list(it)
@@ -301,24 +303,24 @@ func (self * Cache_t) Remove(key interface{}) (it * Value_t, ok bool) {
 	return
 }
 
-func (self * Cache_t) Front() * Value_t {
+func (self *Cache_t) Front() *Value_t {
 	return self.root.next
 }
 
-func (self * Cache_t) Back() * Value_t {
+func (self *Cache_t) Back() *Value_t {
 	return self.root.prev
 }
 
-func (self * Cache_t) End() * Value_t {
+func (self *Cache_t) End() *Value_t {
 	return self.root
 }
 
-func (self * Cache_t) Size() int {
+func (self *Cache_t) Size() int {
 	return len(self.dict)
 }
 
 // takes linear time if sorted before
-func (self * Cache_t) InsertionSortFront(cmp CmpLess) {
+func (self *Cache_t) InsertionSortFront(cmp CmpLess) {
 	for it1 := self.Front().Next(); it1 != self.End(); it1 = it1.Next() {
 		for it2 := it1; it2.Prev() != self.End() && cmp.Less(it2, it2.Prev()); {
 			set_before(cut_list(it2), it2.Prev())
@@ -327,7 +329,7 @@ func (self * Cache_t) InsertionSortFront(cmp CmpLess) {
 }
 
 // takes linear time if sorted before
-func (self * Cache_t) InsertionSortBack(cmp CmpLess) {
+func (self *Cache_t) InsertionSortBack(cmp CmpLess) {
 	for it1 := self.Back().Prev(); it1 != self.End(); it1 = it1.Prev() {
 		for it2 := it1; it2.Next() != self.End() && cmp.Less(it2, it2.Next()); {
 			set_after(cut_list(it2), it2.Next())
@@ -336,14 +338,14 @@ func (self * Cache_t) InsertionSortBack(cmp CmpLess) {
 }
 
 type CmpLess interface {
-	Less(a * Value_t, b * Value_t) bool
+	Less(a *Value_t, b *Value_t) bool
 }
 
 type reverse struct {
 	CmpLess
 }
 
-func (self * reverse) Less(a * Value_t, b * Value_t) bool {
+func (self *reverse) Less(a *Value_t, b *Value_t) bool {
 	return self.Less(b, a)
 }
 
