@@ -139,9 +139,8 @@ func (self *Cache_t) CreateFront2(key interface{}, value func() (interface{}, er
 	if it, ok = self.dict[key]; ok {
 		return it, false, nil
 	}
-	var v interface{}
-	if v, err = value(); err == nil {
-		it = &Value_t{key: key, value: v}
+	it = &Value_t{key: key}
+	if it.value, err = value(); err == nil {
 		self.dict[key] = it
 		set_after(it, self.root)
 	}
@@ -162,9 +161,8 @@ func (self *Cache_t) CreateBack2(key interface{}, value func() (interface{}, err
 	if it, ok = self.dict[key]; ok {
 		return it, false, nil
 	}
-	var v interface{}
-	if v, err = value(); err == nil {
-		it = &Value_t{key: key, value: v}
+	it = &Value_t{key: key}
+	if it.value, err = value(); err == nil {
 		self.dict[key] = it
 		set_before(it, self.root)
 	}
@@ -187,9 +185,8 @@ func (self *Cache_t) PushFront2(key interface{}, value func() (interface{}, erro
 		set_after(cut_list(it), self.root)
 		return it, false, nil
 	}
-	var v interface{}
-	if v, err = value(); err == nil {
-		it = &Value_t{key: key, value: v}
+	it = &Value_t{key: key}
+	if it.value, err = value(); err == nil {
 		self.dict[key] = it
 		set_after(it, self.root)
 	}
@@ -212,9 +209,8 @@ func (self *Cache_t) PushBack2(key interface{}, value func() (interface{}, error
 		set_before(cut_list(it), self.root)
 		return it, false, nil
 	}
-	var v interface{}
-	if v, err = value(); err == nil {
-		it = &Value_t{key: key, value: v}
+	it = &Value_t{key: key}
+	if it.value, err = value(); err == nil {
 		self.dict[key] = it
 		set_before(it, self.root)
 	}
