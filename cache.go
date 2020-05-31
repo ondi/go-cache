@@ -57,7 +57,6 @@ func set_after(it *Value_t, at *Value_t) *Value_t {
 	return it
 }
 
-// very complicated
 func Swap(a *Value_t, b *Value_t) {
 	if a.next == b {
 		a.prev.next = b
@@ -68,7 +67,6 @@ func Swap(a *Value_t, b *Value_t) {
 		b.next = a
 		return
 	}
-
 	if a.prev == b {
 		a.next.prev = b
 		b.prev.next = a
@@ -78,19 +76,12 @@ func Swap(a *Value_t, b *Value_t) {
 		b.prev = a
 		return
 	}
-
 	a.next.prev = b
-	b.next.prev = a
 	a.prev.next = b
+	b.next.prev = a
 	b.prev.next = a
-
-	temp := a.prev
-	a.prev = b.prev
-	b.prev = temp
-
-	temp = a.next
-	a.next = b.next
-	b.next = temp
+	a.prev, b.prev = b.prev, a.prev
+	a.next, b.next = b.next, a.next
 }
 
 func MoveAfter(it *Value_t, at *Value_t) *Value_t {
