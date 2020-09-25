@@ -160,48 +160,60 @@ func (self *Cache_t) CreateBack2(key interface{}, value func() (interface{}, err
 	return it, true, err
 }
 
-func (self *Cache_t) PushFront(key interface{}, value func() interface{}) (it *Value_t, ok bool) {
+func (self *Cache_t) WriteFront(key interface{}, value_new func() interface{}, value_update func(interface{}) interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
+		it.value = value_update(it.value)
 		set_after(cut_list(it), self.root)
 		return it, false
 	}
-	it = &Value_t{key: key, value: value()}
+	it = &Value_t{key: key, value: value_new()}
 	self.dict[key] = it
 	set_after(it, self.root)
 	return it, true
 }
 
-func (self *Cache_t) PushFront2(key interface{}, value func() (interface{}, error)) (it *Value_t, ok bool, err error) {
+func (self *Cache_t) WriteFront2(key interface{}, value_new func() (interface{}, error), value_update func(interface{}) (interface{}, error)) (it *Value_t, ok bool, err error) {
 	if it, ok = self.dict[key]; ok {
+		var v interface{}
+		if v, err = value_update(it.value); err != nil {
+			return
+		}
+		it.value = v
 		set_after(cut_list(it), self.root)
 		return it, false, nil
 	}
 	it = &Value_t{key: key}
-	if it.value, err = value(); err == nil {
+	if it.value, err = value_new(); err == nil {
 		self.dict[key] = it
 		set_after(it, self.root)
 	}
 	return it, true, err
 }
 
-func (self *Cache_t) PushBack(key interface{}, value func() interface{}) (it *Value_t, ok bool) {
+func (self *Cache_t) WriteBack(key interface{}, value_new func() interface{}, value_update func(interface{}) interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
+		it.value = value_update(it.value)
 		set_before(cut_list(it), self.root)
 		return it, false
 	}
-	it = &Value_t{key: key, value: value()}
+	it = &Value_t{key: key, value: value_new()}
 	self.dict[key] = it
 	set_before(it, self.root)
 	return it, true
 }
 
-func (self *Cache_t) PushBack2(key interface{}, value func() (interface{}, error)) (it *Value_t, ok bool, err error) {
+func (self *Cache_t) WriteBack2(key interface{}, value_new func() (interface{}, error), value_update func(interface{}) (interface{}, error)) (it *Value_t, ok bool, err error) {
 	if it, ok = self.dict[key]; ok {
+		var v interface{}
+		if v, err = value_update(it.value); err != nil {
+			return
+		}
+		it.value = v
 		set_before(cut_list(it), self.root)
 		return it, false, nil
 	}
 	it = &Value_t{key: key}
-	if it.value, err = value(); err == nil {
+	if it.value, err = value_new(); err == nil {
 		self.dict[key] = it
 		set_before(it, self.root)
 	}
