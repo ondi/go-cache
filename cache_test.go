@@ -8,7 +8,7 @@ import (
 type MyLess1_t struct{}
 
 func (*MyLess1_t) Less(a *Value_t, b *Value_t) bool {
-	return a.Key().(int) < b.Key().(int)
+	return a.Key.(int) < b.Key.(int)
 }
 
 func Example_sort10() {
@@ -16,15 +16,15 @@ func Example_sort10() {
 	cc.CreateFront(1, func() interface{} { return 10 })
 	cc.PushFront(5, func() interface{} { return 50 })
 	it, _ := cc.FindFront(1)
-	it.Update(100)
+	it.Value = 100
 	cc.CreateFront(7, func() interface{} { return 70 })
 	cc.PushFront(3, func() interface{} { return 30 })
 	it, _ = cc.FindFront(5)
-	it.Update(500)
+	it.Value = 500
 
 	cc.InsertionSortFront(&MyLess1_t{})
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
-		fmt.Printf("%v %v\n", it.Key(), it.Value())
+		fmt.Printf("%v %v\n", it.Key, it.Value)
 	}
 	// Output:
 	// 1 100
@@ -38,14 +38,14 @@ func Example_sort20() {
 	cc.CreateFront(1, func() interface{} { return 10 })
 	cc.PushFront(5, func() interface{} { return 50 })
 	it, _ := cc.FindFront(1)
-	it.Update(100)
+	it.Value = 100
 	cc.CreateFront(7, func() interface{} { return 70 })
 	cc.PushFront(3, func() interface{} { return 30 })
 	it, _ = cc.FindFront(7)
-	it.Update(700)
+	it.Value = 700
 	cc.InsertionSortBack(&MyLess1_t{})
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
-		fmt.Printf("%v %v\n", it.Key(), it.Value())
+		fmt.Printf("%v %v\n", it.Key, it.Value)
 	}
 	// Output:
 	// 7 700
@@ -59,17 +59,17 @@ func Example_swap10() {
 	cc.CreateFront(1, func() interface{} { return 10 })
 	cc.PushFront(5, func() interface{} { return 50 })
 	it, _ := cc.FindFront(1)
-	it.Update(100)
+	it.Value = 100
 	cc.CreateFront(7, func() interface{} { return 70 })
 	cc.PushFront(3, func() interface{} { return 30 })
 	it, _ = cc.FindFront(7)
-	it.Update(700)
+	it.Value = 700
 	it1, _ := cc.Find(1)
 	it2, _ := cc.Find(7)
 	Swap(it1, it2)
 	// 7, 3, 1, 5
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
-		fmt.Printf("%v %v\n", it.Key(), it.Value())
+		fmt.Printf("%v %v\n", it.Key, it.Value)
 	}
 	// Output:
 	// 1 100
@@ -100,6 +100,6 @@ func Benchmark_cache30(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		it, _ := c3.FindFront(i)
-		it.Update(i)
+		it.Value = i
 	}
 }

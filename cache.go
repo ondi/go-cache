@@ -8,28 +8,19 @@
 // Create/Push return value:
 // {iterator, true} = inserted {key, value}
 // {intertor, false} = key already exists, no changes made
-// iterate over cache: for i := c.Front(); i != c.End(); i = i.Next() {}
+// iterate over cache:
+// for it := c.Front(); it != c.End(); it = it.Next() {
+//	fmt.Printf("%v=%v\n", it.Key, it.Value)
+//}
 //
 
 package cache
 
 type Value_t struct {
-	key   interface{}
-	value interface{}
+	Key   interface{} // read only
+	Value interface{}
 	prev  *Value_t
 	next  *Value_t
-}
-
-func (self *Value_t) Key() interface{} {
-	return self.key
-}
-
-func (self *Value_t) Value() interface{} {
-	return self.value
-}
-
-func (self *Value_t) Update(value interface{}) {
-	self.value = value
 }
 
 func (self *Value_t) Next() *Value_t {
@@ -125,7 +116,7 @@ func (self *Cache_t) CreateFront(key interface{}, value func() interface{}) (it 
 	if it, ok = self.dict[key]; ok {
 		return it, false
 	}
-	it = &Value_t{key: key, value: value()}
+	it = &Value_t{Key: key, Value: value()}
 	self.dict[key] = it
 	set_after(it, self.root)
 	return it, true
@@ -135,8 +126,8 @@ func (self *Cache_t) CreateFront2(key interface{}, value func() (interface{}, er
 	if it, ok = self.dict[key]; ok {
 		return it, false, nil
 	}
-	it = &Value_t{key: key}
-	if it.value, err = value(); err == nil {
+	it = &Value_t{Key: key}
+	if it.Value, err = value(); err == nil {
 		self.dict[key] = it
 		set_after(it, self.root)
 	}
@@ -147,7 +138,7 @@ func (self *Cache_t) CreateBack(key interface{}, value func() interface{}) (it *
 	if it, ok = self.dict[key]; ok {
 		return it, false
 	}
-	it = &Value_t{key: key, value: value()}
+	it = &Value_t{Key: key, Value: value()}
 	self.dict[key] = it
 	set_before(it, self.root)
 	return it, true
@@ -157,8 +148,8 @@ func (self *Cache_t) CreateBack2(key interface{}, value func() (interface{}, err
 	if it, ok = self.dict[key]; ok {
 		return it, false, nil
 	}
-	it = &Value_t{key: key}
-	if it.value, err = value(); err == nil {
+	it = &Value_t{Key: key}
+	if it.Value, err = value(); err == nil {
 		self.dict[key] = it
 		set_before(it, self.root)
 	}
@@ -170,7 +161,7 @@ func (self *Cache_t) PushFront(key interface{}, value func() interface{}) (it *V
 		set_after(cut_list(it), self.root)
 		return it, false
 	}
-	it = &Value_t{key: key, value: value()}
+	it = &Value_t{Key: key, Value: value()}
 	self.dict[key] = it
 	set_after(it, self.root)
 	return it, true
@@ -181,8 +172,8 @@ func (self *Cache_t) PushFront2(key interface{}, value func() (interface{}, erro
 		set_after(cut_list(it), self.root)
 		return it, false, nil
 	}
-	it = &Value_t{key: key}
-	if it.value, err = value(); err == nil {
+	it = &Value_t{Key: key}
+	if it.Value, err = value(); err == nil {
 		self.dict[key] = it
 		set_after(it, self.root)
 	}
@@ -194,7 +185,7 @@ func (self *Cache_t) PushBack(key interface{}, value func() interface{}) (it *Va
 		set_before(cut_list(it), self.root)
 		return it, false
 	}
-	it = &Value_t{key: key, value: value()}
+	it = &Value_t{Key: key, Value: value()}
 	self.dict[key] = it
 	set_before(it, self.root)
 	return it, true
@@ -205,8 +196,8 @@ func (self *Cache_t) PushBack2(key interface{}, value func() (interface{}, error
 		set_before(cut_list(it), self.root)
 		return it, false, nil
 	}
-	it = &Value_t{key: key}
-	if it.value, err = value(); err == nil {
+	it = &Value_t{Key: key}
+	if it.Value, err = value(); err == nil {
 		self.dict[key] = it
 		set_before(it, self.root)
 	}
@@ -257,7 +248,7 @@ func (self *Cache_t) Size() int {
 }
 
 // takes linear time if sorted before
-func (self *Cache_t) InsertionSortFront(cmp CmpLess) {
+func (self *Cache_t) InsertionSortFront(cmp IsLess) {
 	for it1 := self.Front().Next(); it1 != self.End(); it1 = it1.Next() {
 		for it2 := it1; it2.Prev() != self.End() && cmp.Less(it2, it2.Prev()); {
 			set_before(cut_list(it2), it2.Prev())
@@ -266,7 +257,7 @@ func (self *Cache_t) InsertionSortFront(cmp CmpLess) {
 }
 
 // takes linear time if sorted before
-func (self *Cache_t) InsertionSortBack(cmp CmpLess) {
+func (self *Cache_t) InsertionSortBack(cmp IsLess) {
 	for it1 := self.Back().Prev(); it1 != self.End(); it1 = it1.Prev() {
 		for it2 := it1; it2.Next() != self.End() && cmp.Less(it2, it2.Next()); {
 			set_after(cut_list(it2), it2.Next())
@@ -274,18 +265,18 @@ func (self *Cache_t) InsertionSortBack(cmp CmpLess) {
 	}
 }
 
-type CmpLess interface {
+type IsLess interface {
 	Less(a *Value_t, b *Value_t) bool
 }
 
 type reverse struct {
-	CmpLess
+	IsLess
 }
 
 func (self *reverse) Less(a *Value_t, b *Value_t) bool {
 	return self.Less(b, a)
 }
 
-func Reverse(cmp CmpLess) CmpLess {
+func Reverse(cmp IsLess) IsLess {
 	return &reverse{cmp}
 }
