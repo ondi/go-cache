@@ -116,6 +116,18 @@ func (self *Cache_t) CreateFront(key interface{}, value func() interface{}) (it 
 	return it, true
 }
 
+func (self *Cache_t) CreateFront2(key interface{}, value func() *Value_t) (it *Value_t, ok bool) {
+	if it, ok = self.dict[key]; ok {
+		return it, false
+	}
+	if it = value(); it != nil {
+		it.Key = key
+		self.dict[key] = it
+		set_after(it, self.root)
+	}
+	return it, true
+}
+
 func (self *Cache_t) CreateBack(key interface{}, value func() interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		return it, false
@@ -123,6 +135,18 @@ func (self *Cache_t) CreateBack(key interface{}, value func() interface{}) (it *
 	it = &Value_t{Key: key, Value: value()}
 	self.dict[key] = it
 	set_before(it, self.root)
+	return it, true
+}
+
+func (self *Cache_t) CreateBack2(key interface{}, value func() *Value_t) (it *Value_t, ok bool) {
+	if it, ok = self.dict[key]; ok {
+		return it, false
+	}
+	if it = value(); it != nil {
+		it.Key = key
+		self.dict[key] = it
+		set_before(it, self.root)
+	}
 	return it, true
 }
 
@@ -137,6 +161,19 @@ func (self *Cache_t) PushFront(key interface{}, value func() interface{}) (it *V
 	return it, true
 }
 
+func (self *Cache_t) PushFront2(key interface{}, value func() *Value_t) (it *Value_t, ok bool) {
+	if it, ok = self.dict[key]; ok {
+		set_after(cut_list(it), self.root)
+		return it, false
+	}
+	if it = value(); it != nil {
+		it.Key = key
+		self.dict[key] = it
+		set_after(it, self.root)
+	}
+	return it, true
+}
+
 func (self *Cache_t) PushBack(key interface{}, value func() interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		set_before(cut_list(it), self.root)
@@ -145,6 +182,19 @@ func (self *Cache_t) PushBack(key interface{}, value func() interface{}) (it *Va
 	it = &Value_t{Key: key, Value: value()}
 	self.dict[key] = it
 	set_before(it, self.root)
+	return it, true
+}
+
+func (self *Cache_t) PushBack2(key interface{}, value func() *Value_t) (it *Value_t, ok bool) {
+	if it, ok = self.dict[key]; ok {
+		set_before(cut_list(it), self.root)
+		return it, false
+	}
+	if it = value(); it != nil {
+		it.Key = key
+		self.dict[key] = it
+		set_before(it, self.root)
+	}
 	return it, true
 }
 
