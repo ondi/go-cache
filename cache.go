@@ -1,13 +1,7 @@
 //
-// Use exclusive lock for all operations
-// CreateFront() and CreateBack() - create new element if it does not exists
-// and move it to front/back of LRU list. Do nothing if key exists.
-// PushFront() and PushBack() - same as CreateFront() and CreateBack()
-// if key exists move it to front/back of LRU list.
-// FindFront() and FindBack() if key exists move it to front/back of LRU list.
-// Create/Push return value:
-// {iterator, true} = inserted {key, value}
-// {intertor, false} = key already exists, no changes made
+// Create/Push/Find return value:
+// {iterator, true} = inserted/found {key, value}
+// {intertor, false} = key already exists/not found, no changes made
 // iterate over cache:
 // for it := c.Front(); it != c.End(); it = it.Next() {
 //	fmt.Printf("%v=%v\n", it.Key, it.Value)
@@ -122,18 +116,6 @@ func (self *Cache_t) CreateFront(key interface{}, value func() interface{}) (it 
 	return it, true
 }
 
-func (self *Cache_t) CreateFront2(key interface{}, value func() (interface{}, error)) (it *Value_t, ok bool, err error) {
-	if it, ok = self.dict[key]; ok {
-		return it, false, nil
-	}
-	it = &Value_t{Key: key}
-	if it.Value, err = value(); err == nil {
-		self.dict[key] = it
-		set_after(it, self.root)
-	}
-	return it, true, err
-}
-
 func (self *Cache_t) CreateBack(key interface{}, value func() interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		return it, false
@@ -142,18 +124,6 @@ func (self *Cache_t) CreateBack(key interface{}, value func() interface{}) (it *
 	self.dict[key] = it
 	set_before(it, self.root)
 	return it, true
-}
-
-func (self *Cache_t) CreateBack2(key interface{}, value func() (interface{}, error)) (it *Value_t, ok bool, err error) {
-	if it, ok = self.dict[key]; ok {
-		return it, false, nil
-	}
-	it = &Value_t{Key: key}
-	if it.Value, err = value(); err == nil {
-		self.dict[key] = it
-		set_before(it, self.root)
-	}
-	return it, true, err
 }
 
 func (self *Cache_t) PushFront(key interface{}, value func() interface{}) (it *Value_t, ok bool) {
@@ -167,19 +137,6 @@ func (self *Cache_t) PushFront(key interface{}, value func() interface{}) (it *V
 	return it, true
 }
 
-func (self *Cache_t) PushFront2(key interface{}, value func() (interface{}, error)) (it *Value_t, ok bool, err error) {
-	if it, ok = self.dict[key]; ok {
-		set_after(cut_list(it), self.root)
-		return it, false, nil
-	}
-	it = &Value_t{Key: key}
-	if it.Value, err = value(); err == nil {
-		self.dict[key] = it
-		set_after(it, self.root)
-	}
-	return it, true, err
-}
-
 func (self *Cache_t) PushBack(key interface{}, value func() interface{}) (it *Value_t, ok bool) {
 	if it, ok = self.dict[key]; ok {
 		set_before(cut_list(it), self.root)
@@ -189,19 +146,6 @@ func (self *Cache_t) PushBack(key interface{}, value func() interface{}) (it *Va
 	self.dict[key] = it
 	set_before(it, self.root)
 	return it, true
-}
-
-func (self *Cache_t) PushBack2(key interface{}, value func() (interface{}, error)) (it *Value_t, ok bool, err error) {
-	if it, ok = self.dict[key]; ok {
-		set_before(cut_list(it), self.root)
-		return it, false, nil
-	}
-	it = &Value_t{Key: key}
-	if it.Value, err = value(); err == nil {
-		self.dict[key] = it
-		set_before(it, self.root)
-	}
-	return it, true, err
 }
 
 func (self *Cache_t) FindFront(key interface{}) (it *Value_t, ok bool) {
