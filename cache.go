@@ -116,18 +116,6 @@ func (self *Cache_t[Key_t, Mapped_t]) CreateFront(key Key_t, value func() Mapped
 	return it, true
 }
 
-func (self *Cache_t[Key_t, Mapped_t]) CreateFront2(key Key_t, value func() *Value_t[Key_t, Mapped_t]) (it *Value_t[Key_t, Mapped_t], ok bool) {
-	if it, ok = self.dict[key]; ok {
-		return it, false
-	}
-	if it = value(); it != nil {
-		it.Key = key
-		self.dict[key] = it
-		it.set_after(self.root)
-	}
-	return it, true
-}
-
 func (self *Cache_t[Key_t, Mapped_t]) CreateBack(key Key_t, value func() Mapped_t) (it *Value_t[Key_t, Mapped_t], ok bool) {
 	if it, ok = self.dict[key]; ok {
 		return it, false
@@ -135,18 +123,6 @@ func (self *Cache_t[Key_t, Mapped_t]) CreateBack(key Key_t, value func() Mapped_
 	it = &Value_t[Key_t, Mapped_t]{Key: key, Value: value()}
 	self.dict[key] = it
 	it.set_before(self.root)
-	return it, true
-}
-
-func (self *Cache_t[Key_t, Mapped_t]) CreateBack2(key Key_t, value func() *Value_t[Key_t, Mapped_t]) (it *Value_t[Key_t, Mapped_t], ok bool) {
-	if it, ok = self.dict[key]; ok {
-		return it, false
-	}
-	if it = value(); it != nil {
-		it.Key = key
-		self.dict[key] = it
-		it.set_before(self.root)
-	}
 	return it, true
 }
 
@@ -161,19 +137,6 @@ func (self *Cache_t[Key_t, Mapped_t]) PushFront(key Key_t, value func() Mapped_t
 	return it, true
 }
 
-func (self *Cache_t[Key_t, Mapped_t]) PushFront2(key Key_t, value func() *Value_t[Key_t, Mapped_t]) (it *Value_t[Key_t, Mapped_t], ok bool) {
-	if it, ok = self.dict[key]; ok {
-		it.cut_list().set_after(self.root)
-		return it, false
-	}
-	if it = value(); it != nil {
-		it.Key = key
-		self.dict[key] = it
-		it.set_after(self.root)
-	}
-	return it, true
-}
-
 func (self *Cache_t[Key_t, Mapped_t]) PushBack(key Key_t, value func() Mapped_t) (it *Value_t[Key_t, Mapped_t], ok bool) {
 	if it, ok = self.dict[key]; ok {
 		it.cut_list().set_before(self.root)
@@ -182,19 +145,6 @@ func (self *Cache_t[Key_t, Mapped_t]) PushBack(key Key_t, value func() Mapped_t)
 	it = &Value_t[Key_t, Mapped_t]{Key: key, Value: value()}
 	self.dict[key] = it
 	it.set_before(self.root)
-	return it, true
-}
-
-func (self *Cache_t[Key_t, Mapped_t]) PushBack2(key Key_t, value func() *Value_t[Key_t, Mapped_t]) (it *Value_t[Key_t, Mapped_t], ok bool) {
-	if it, ok = self.dict[key]; ok {
-		it.cut_list().set_before(self.root)
-		return it, false
-	}
-	if it = value(); it != nil {
-		it.Key = key
-		self.dict[key] = it
-		it.set_before(self.root)
-	}
 	return it, true
 }
 
