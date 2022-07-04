@@ -5,9 +5,7 @@ import (
 	"testing"
 )
 
-type MyLess1_t[Key_t comparable, Mapped_t any] struct{}
-
-func (*MyLess1_t[Key_t, Mapped_t]) Less(a *Value_t[Key_t, Mapped_t], b *Value_t[Key_t, Mapped_t]) bool {
+func MyLess[Key_t comparable, Mapped_t any](a *Value_t[Key_t, Mapped_t], b *Value_t[Key_t, Mapped_t]) bool {
 	return any(a.Key).(int) < any(b.Key).(int)
 }
 
@@ -22,7 +20,7 @@ func Example_sort10() {
 	it, _ = cc.FindFront(5)
 	it.Value = 500
 
-	cc.InsertionSortFront(&MyLess1_t[int, int]{})
+	cc.InsertionSortFront(MyLess[int, int])
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
 		fmt.Printf("%v %v\n", it.Key, it.Value)
 	}
@@ -43,7 +41,7 @@ func Example_sort20() {
 	cc.PushFront(3, func() int { return 30 })
 	it, _ = cc.FindFront(7)
 	it.Value = 700
-	cc.InsertionSortBack(&MyLess1_t[int, int]{})
+	cc.InsertionSortBack(MyLess[int, int])
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
 		fmt.Printf("%v %v\n", it.Key, it.Value)
 	}
