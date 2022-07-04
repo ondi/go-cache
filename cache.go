@@ -114,7 +114,7 @@ func (self *Cache_t[Key_t, Mapped_t]) Size() int {
 }
 
 // linear if sorted before
-func (self *Cache_t[Key_t, Mapped_t]) InsertionSortFront(less func(a *Value_t[Key_t, Mapped_t], b *Value_t[Key_t, Mapped_t]) bool) {
+func (self *Cache_t[Key_t, Mapped_t]) InsertionSortFront(less Less[Key_t, Mapped_t]) {
 	for it1 := self.Front().Next(); it1 != self.End(); it1 = it1.Next() {
 		for it2 := it1; it2.Prev() != self.End() && less(it2, it2.Prev()); {
 			it2.cut_list().set_before(it2.Prev())
@@ -123,10 +123,12 @@ func (self *Cache_t[Key_t, Mapped_t]) InsertionSortFront(less func(a *Value_t[Ke
 }
 
 // linear if sorted before
-func (self *Cache_t[Key_t, Mapped_t]) InsertionSortBack(less func(a *Value_t[Key_t, Mapped_t], b *Value_t[Key_t, Mapped_t]) bool) {
+func (self *Cache_t[Key_t, Mapped_t]) InsertionSortBack(less Less[Key_t, Mapped_t]) {
 	for it1 := self.Back().Prev(); it1 != self.End(); it1 = it1.Prev() {
 		for it2 := it1; it2.Next() != self.End() && less(it2, it2.Next()); {
 			it2.cut_list().set_after(it2.Next())
 		}
 	}
 }
+
+type Less[Key_t comparable, Mapped_t any] func(a *Value_t[Key_t, Mapped_t], b *Value_t[Key_t, Mapped_t]) bool
