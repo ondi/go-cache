@@ -78,3 +78,27 @@ func MoveBefore[Key_t comparable, Mapped_t any](it, at *Value_t[Key_t, Mapped_t]
 		SetPrev(it, at)
 	}
 }
+
+func SortValueFront[Key_t comparable, Mapped_t any](it, root *Value_t[Key_t, Mapped_t], less Less_t[Key_t, Mapped_t]) {
+	for v := root.Next(); v != root; v = v.Next() {
+		if less(it, v) {
+			CutList(it)
+			SetPrev(it, v)
+			return
+		}
+	}
+	CutList(it)
+	SetPrev(it, root)
+}
+
+func SortValueBack[Key_t comparable, Mapped_t any](it, root *Value_t[Key_t, Mapped_t], less Less_t[Key_t, Mapped_t]) {
+	for v := root.Prev(); v != root; v = v.Prev() {
+		if less(it, v) {
+			CutList(it)
+			SetNext(it, v)
+			return
+		}
+	}
+	CutList(it)
+	SetNext(it, root)
+}

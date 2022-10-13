@@ -50,16 +50,6 @@ func (self *Cache_t[Key_t, Mapped_t]) CreateBack(key Key_t, value func() Mapped_
 	return it, true
 }
 
-func (self *Cache_t[Key_t, Mapped_t]) CreateSorted(key Key_t, value func() Mapped_t, where func(it, root *Value_t[Key_t, Mapped_t], less Less_t[Key_t, Mapped_t]), less Less_t[Key_t, Mapped_t]) (it *Value_t[Key_t, Mapped_t], ok bool) {
-	if it, ok = self.dict[key]; ok {
-		return it, false
-	}
-	it = &Value_t[Key_t, Mapped_t]{Key: key, Value: value()}
-	self.dict[key] = it
-	where(it, self.root, less)
-	return it, true
-}
-
 func (self *Cache_t[Key_t, Mapped_t]) PushFront(key Key_t, value func() Mapped_t) (it *Value_t[Key_t, Mapped_t], ok bool) {
 	if it, ok = self.dict[key]; ok {
 		CutList(it)
@@ -81,18 +71,6 @@ func (self *Cache_t[Key_t, Mapped_t]) PushBack(key Key_t, value func() Mapped_t)
 	it = &Value_t[Key_t, Mapped_t]{Key: key, Value: value()}
 	self.dict[key] = it
 	SetPrev(it, self.root)
-	return it, true
-}
-
-func (self *Cache_t[Key_t, Mapped_t]) PushSorted(key Key_t, value func() Mapped_t, where func(it, root *Value_t[Key_t, Mapped_t], less Less_t[Key_t, Mapped_t]), less Less_t[Key_t, Mapped_t]) (it *Value_t[Key_t, Mapped_t], ok bool) {
-	if it, ok = self.dict[key]; ok {
-		CutList(it)
-		where(it, self.root, less)
-		return it, false
-	}
-	it = &Value_t[Key_t, Mapped_t]{Key: key, Value: value()}
-	self.dict[key] = it
-	where(it, self.root, less)
 	return it, true
 }
 
@@ -159,24 +137,4 @@ func (self *Cache_t[Key_t, Mapped_t]) InsertionSortBack(less Less_t[Key_t, Mappe
 			SetNext(it2, it2.Next())
 		}
 	}
-}
-
-func SortValueFront[Key_t comparable, Mapped_t any](it, root *Value_t[Key_t, Mapped_t], less Less_t[Key_t, Mapped_t]) {
-	for v := root.Next(); v != root; v = v.Next() {
-		if less(it, v) {
-			SetPrev(it, v)
-			return
-		}
-	}
-	SetPrev(it, root)
-}
-
-func SortValueBack[Key_t comparable, Mapped_t any](it, root *Value_t[Key_t, Mapped_t], less Less_t[Key_t, Mapped_t]) {
-	for v := root.Prev(); v != root; v = v.Prev() {
-		if less(it, v) {
-			SetNext(it, v)
-			return
-		}
-	}
-	SetNext(it, root)
 }

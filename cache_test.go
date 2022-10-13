@@ -25,7 +25,8 @@ func Example_create10() {
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(values), func(i, j int) {values[i], values[j] = values[j], values[i]})
 	for _, v := range values {
-		cc.CreateSorted(v, func() int { return v }, SortValueFront[int, int], IntKeyValue)
+		it, _ := cc.CreateFront(v, func() int { return v })
+		SortValueFront(it, cc.End(), IntKeyValue)
 	}
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
 		fmt.Printf("%v %v\n", it.Key, it.Value)
@@ -49,7 +50,8 @@ func Example_push10() {
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(values), func(i, j int) {values[i], values[j] = values[j], values[i]})
 	for _, v := range values {
-		cc.PushSorted(v, func() int { return v }, SortValueBack[int, int], IntKeyValue)
+		it, _ := cc.PushBack(v, func() int { return v })
+		SortValueBack(it, cc.End(), IntKeyValue)
 	}
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
 		fmt.Printf("%v %v\n", it.Key, it.Value)
