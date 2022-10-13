@@ -1,22 +1,66 @@
+//
+// go clean -testcache && go test ./...
+//
+
 package cache
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
+	"time"
 )
 
-func MyLess[Key_t comparable, Mapped_t any](a *Value_t[Key_t, Mapped_t], b *Value_t[Key_t, Mapped_t]) bool {
+func IntLess[Key_t comparable, Mapped_t any](a, b *Value_t[Key_t, Mapped_t]) bool {
 	return any(a.Key).(int) < any(b.Key).(int)
 }
 
-func Test_Create10(t *testing.T) {
+func Example_create10() {
 	cc := New[int, int]()
-	cc.Create(1, func() int { return 10 }, SetNext[int, int])
+	values := []int{1,2,3,4,5,6,7,8,9,0}
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(values), func(i, j int) {values[i], values[j] = values[j], values[i]})
+	for _, v := range values {
+		cc.CreateSorted(v, func() int { return v }, SortValueFront[int, int], IntLess[int, int])
+	}
+	for it := cc.Front(); it != cc.End(); it = it.Next() {
+		fmt.Printf("%v %v\n", it.Key, it.Value)
+	}
+	// Output:
+	// 0 0
+	// 1 1
+	// 2 2
+	// 3 3
+	// 4 4
+	// 5 5
+	// 6 6
+	// 7 7
+	// 8 8
+	// 9 9
 }
 
-func Test_Push10(t *testing.T) {
+func Example_push10() {
 	cc := New[int, int]()
-	cc.Push(1, func() int { return 10 }, SetNext[int, int])
+	values := []int{1,2,3,4,5,6,7,8,9,0}
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(values), func(i, j int) {values[i], values[j] = values[j], values[i]})
+	for _, v := range values {
+		cc.PushSorted(v, func() int { return v }, SortValueBack[int, int], IntLess[int, int])
+	}
+	for it := cc.Front(); it != cc.End(); it = it.Next() {
+		fmt.Printf("%v %v\n", it.Key, it.Value)
+	}
+	// Output:
+	// 9 9
+	// 8 8
+	// 7 7
+	// 6 6
+	// 5 5
+	// 4 4
+	// 3 3
+	// 2 2
+	// 1 1
+	// 0 0
 }
 
 func Example_sort10() {
@@ -30,7 +74,7 @@ func Example_sort10() {
 	it, _ = cc.FindFront(5)
 	it.Value = 500
 
-	cc.InsertionSortFront(MyLess[int, int])
+	cc.InsertionSortFront(IntLess[int, int])
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
 		fmt.Printf("%v %v\n", it.Key, it.Value)
 	}
@@ -51,7 +95,7 @@ func Example_sort20() {
 	cc.PushFront(3, func() int { return 30 })
 	it, _ = cc.FindFront(7)
 	it.Value = 700
-	cc.InsertionSortBack(MyLess[int, int])
+	cc.InsertionSortBack(IntLess[int, int])
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
 		fmt.Printf("%v %v\n", it.Key, it.Value)
 	}
