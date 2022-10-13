@@ -9,6 +9,16 @@ func MyLess[Key_t comparable, Mapped_t any](a *Value_t[Key_t, Mapped_t], b *Valu
 	return any(a.Key).(int) < any(b.Key).(int)
 }
 
+func Test_Create10(t *testing.T) {
+	cc := New[int, int]()
+	cc.Create(1, func() int { return 10 }, SetNext[int, int])
+}
+
+func Test_Push10(t *testing.T) {
+	cc := New[int, int]()
+	cc.Push(1, func() int { return 10 }, SetNext[int, int])
+}
+
 func Example_sort10() {
 	cc := New[int, int]()
 	cc.CreateFront(1, func() int { return 10 })

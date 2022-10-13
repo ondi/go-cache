@@ -19,26 +19,23 @@ func (self *Value_t[Key_t, Mapped_t]) Prev() *Value_t[Key_t, Mapped_t] {
 	return self.prev
 }
 
-func CutList[Key_t comparable, Mapped_t any](it *Value_t[Key_t, Mapped_t]) *Value_t[Key_t, Mapped_t] {
+func CutList[Key_t comparable, Mapped_t any](it *Value_t[Key_t, Mapped_t]) {
 	it.prev.next = it.next
 	it.next.prev = it.prev
-	return it
 }
 
-func SetBefore[Key_t comparable, Mapped_t any](it *Value_t[Key_t, Mapped_t], at *Value_t[Key_t, Mapped_t]) *Value_t[Key_t, Mapped_t] {
+func SetPrev[Key_t comparable, Mapped_t any](it *Value_t[Key_t, Mapped_t], at *Value_t[Key_t, Mapped_t]) {
 	it.prev = at.prev
 	at.prev.next = it
 	at.prev = it
 	it.next = at
-	return it
 }
 
-func SetAfter[Key_t comparable, Mapped_t any](it *Value_t[Key_t, Mapped_t], at *Value_t[Key_t, Mapped_t]) *Value_t[Key_t, Mapped_t] {
+func SetNext[Key_t comparable, Mapped_t any](it *Value_t[Key_t, Mapped_t], at *Value_t[Key_t, Mapped_t]) {
 	it.next = at.next
 	at.next.prev = it
 	at.next = it
 	it.prev = at
-	return it
 }
 
 func Swap[Key_t comparable, Mapped_t any](a *Value_t[Key_t, Mapped_t], b *Value_t[Key_t, Mapped_t]) {
@@ -70,14 +67,16 @@ func Swap[Key_t comparable, Mapped_t any](a *Value_t[Key_t, Mapped_t], b *Value_
 
 func (it *Value_t[Key_t, Mapped_t]) MoveAfter(at *Value_t[Key_t, Mapped_t]) *Value_t[Key_t, Mapped_t] {
 	if it != at {
-		SetAfter(CutList(it), at)
+		CutList(it)
+		SetNext(it, at)
 	}
 	return it
 }
 
 func (it *Value_t[Key_t, Mapped_t]) MoveBefore(at *Value_t[Key_t, Mapped_t]) *Value_t[Key_t, Mapped_t] {
 	if it != at {
-		SetBefore(CutList(it), at)
+		CutList(it)
+		SetPrev(it, at)
 	}
 	return it
 }
