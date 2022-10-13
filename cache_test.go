@@ -64,7 +64,7 @@ func Example_swap10() {
 	it.Value = 700
 	it1, _ := cc.Find(1)
 	it2, _ := cc.Find(7)
-	it1.Swap(it2)
+	Swap(it1, it2)
 	// 7, 3, 1, 5
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
 		fmt.Printf("%v %v\n", it.Key, it.Value)

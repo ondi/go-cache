@@ -34,7 +34,7 @@ func (self *Cache_t[Key_t, Mapped_t]) CreateFront(key Key_t, value func() Mapped
 	}
 	it = &Value_t[Key_t, Mapped_t]{Key: key, Value: value()}
 	self.dict[key] = it
-	it.set_after(self.root)
+	SetAfter(it, self.root)
 	return it, true
 }
 
@@ -44,42 +44,42 @@ func (self *Cache_t[Key_t, Mapped_t]) CreateBack(key Key_t, value func() Mapped_
 	}
 	it = &Value_t[Key_t, Mapped_t]{Key: key, Value: value()}
 	self.dict[key] = it
-	it.set_before(self.root)
+	SetBefore(it, self.root)
 	return it, true
 }
 
 func (self *Cache_t[Key_t, Mapped_t]) PushFront(key Key_t, value func() Mapped_t) (it *Value_t[Key_t, Mapped_t], ok bool) {
 	if it, ok = self.dict[key]; ok {
-		it.cut_list().set_after(self.root)
+		SetAfter(CutList(it), self.root)
 		return it, false
 	}
 	it = &Value_t[Key_t, Mapped_t]{Key: key, Value: value()}
 	self.dict[key] = it
-	it.set_after(self.root)
+	SetAfter(it, self.root)
 	return it, true
 }
 
 func (self *Cache_t[Key_t, Mapped_t]) PushBack(key Key_t, value func() Mapped_t) (it *Value_t[Key_t, Mapped_t], ok bool) {
 	if it, ok = self.dict[key]; ok {
-		it.cut_list().set_before(self.root)
+		SetBefore(CutList(it), self.root)
 		return it, false
 	}
 	it = &Value_t[Key_t, Mapped_t]{Key: key, Value: value()}
 	self.dict[key] = it
-	it.set_before(self.root)
+	SetBefore(it, self.root)
 	return it, true
 }
 
 func (self *Cache_t[Key_t, Mapped_t]) FindFront(key Key_t) (it *Value_t[Key_t, Mapped_t], ok bool) {
 	if it, ok = self.dict[key]; ok {
-		it.cut_list().set_after(self.root)
+		SetAfter(CutList(it), self.root)
 	}
 	return
 }
 
 func (self *Cache_t[Key_t, Mapped_t]) FindBack(key Key_t) (it *Value_t[Key_t, Mapped_t], ok bool) {
 	if it, ok = self.dict[key]; ok {
-		it.cut_list().set_before(self.root)
+		SetBefore(CutList(it), self.root)
 	}
 	return
 }
@@ -92,7 +92,7 @@ func (self *Cache_t[Key_t, Mapped_t]) Find(key Key_t) (it *Value_t[Key_t, Mapped
 func (self *Cache_t[Key_t, Mapped_t]) Remove(key Key_t) (it *Value_t[Key_t, Mapped_t], ok bool) {
 	if it, ok = self.dict[key]; ok {
 		delete(self.dict, key)
-		it.cut_list()
+		CutList(it)
 	}
 	return
 }
@@ -117,7 +117,7 @@ func (self *Cache_t[Key_t, Mapped_t]) Size() int {
 func (self *Cache_t[Key_t, Mapped_t]) InsertionSortFront(less Less_t[Key_t, Mapped_t]) {
 	for it1 := self.Front().Next(); it1 != self.End(); it1 = it1.Next() {
 		for it2 := it1; it2.Prev() != self.End() && less(it2, it2.Prev()); {
-			it2.cut_list().set_before(it2.Prev())
+			SetBefore(CutList(it2), it2.Prev())
 		}
 	}
 }
@@ -126,7 +126,7 @@ func (self *Cache_t[Key_t, Mapped_t]) InsertionSortFront(less Less_t[Key_t, Mapp
 func (self *Cache_t[Key_t, Mapped_t]) InsertionSortBack(less Less_t[Key_t, Mapped_t]) {
 	for it1 := self.Back().Prev(); it1 != self.End(); it1 = it1.Prev() {
 		for it2 := it1; it2.Next() != self.End() && less(it2, it2.Next()); {
-			it2.cut_list().set_after(it2.Next())
+			SetAfter(CutList(it2), it2.Next())
 		}
 	}
 }
