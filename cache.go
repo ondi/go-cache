@@ -15,6 +15,8 @@ type Cache_t[Key_t comparable, Mapped_t any] struct {
 	root *Value_t[Key_t, Mapped_t]
 }
 
+type Less_t[Key_t comparable, Mapped_t any] func(a, b *Value_t[Key_t, Mapped_t]) bool
+
 func New[Key_t comparable, Mapped_t any]() (self *Cache_t[Key_t, Mapped_t]) {
 	self = &Cache_t[Key_t, Mapped_t]{}
 	self.Clear()
@@ -158,5 +160,3 @@ func (self *Cache_t[Key_t, Mapped_t]) InsertionSortBack(less Less_t[Key_t, Mappe
 		}
 	}
 }
-
-type Less_t[Key_t comparable, Mapped_t any] func(a *Value_t[Key_t, Mapped_t], b *Value_t[Key_t, Mapped_t]) bool
