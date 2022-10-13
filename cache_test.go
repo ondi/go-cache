@@ -11,17 +11,21 @@ import (
 	"time"
 )
 
-func IntLess[Key_t comparable, Mapped_t any](a, b *Value_t[Key_t, Mapped_t]) bool {
-	return any(a.Key).(int) < any(b.Key).(int)
+func IntKey[Mapped_t any](a, b *Value_t[int, Mapped_t]) bool {
+	return a.Key < b.Key
+}
+
+func IntKeyValue(a, b *Value_t[int, int]) bool {
+	return a.Value < b.Value
 }
 
 func Example_create10() {
 	cc := New[int, int]()
-	values := []int{1,2,3,4,5,6,7,8,9,0}
+	values := []int{0,1,1,2,3,3,3,4,5,6,7,8,9}
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(values), func(i, j int) {values[i], values[j] = values[j], values[i]})
 	for _, v := range values {
-		cc.CreateSorted(v, func() int { return v }, SortValueFront[int, int], IntLess[int, int])
+		cc.CreateSorted(v, func() int { return v }, SortValueFront[int, int], IntKeyValue)
 	}
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
 		fmt.Printf("%v %v\n", it.Key, it.Value)
@@ -41,11 +45,11 @@ func Example_create10() {
 
 func Example_push10() {
 	cc := New[int, int]()
-	values := []int{1,2,3,4,5,6,7,8,9,0}
+	values := []int{0,1,1,2,3,3,3,4,5,6,7,8,9}
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(values), func(i, j int) {values[i], values[j] = values[j], values[i]})
 	for _, v := range values {
-		cc.PushSorted(v, func() int { return v }, SortValueBack[int, int], IntLess[int, int])
+		cc.PushSorted(v, func() int { return v }, SortValueBack[int, int], IntKeyValue)
 	}
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
 		fmt.Printf("%v %v\n", it.Key, it.Value)
@@ -74,7 +78,7 @@ func Example_sort10() {
 	it, _ = cc.FindFront(5)
 	it.Value = 500
 
-	cc.InsertionSortFront(IntLess[int, int])
+	cc.InsertionSortFront(IntKey[int])
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
 		fmt.Printf("%v %v\n", it.Key, it.Value)
 	}
@@ -95,7 +99,7 @@ func Example_sort20() {
 	cc.PushFront(3, func() int { return 30 })
 	it, _ = cc.FindFront(7)
 	it.Value = 700
-	cc.InsertionSortBack(IntLess[int, int])
+	cc.InsertionSortBack(IntKey[int])
 	for it := cc.Front(); it != cc.End(); it = it.Next() {
 		fmt.Printf("%v %v\n", it.Key, it.Value)
 	}

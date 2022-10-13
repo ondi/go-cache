@@ -87,7 +87,7 @@ func (self *Cache_t[Key_t, Mapped_t]) PushBack(key Key_t, value func() Mapped_t)
 func (self *Cache_t[Key_t, Mapped_t]) PushSorted(key Key_t, value func() Mapped_t, where func(it, root *Value_t[Key_t, Mapped_t], less Less_t[Key_t, Mapped_t]), less Less_t[Key_t, Mapped_t]) (it *Value_t[Key_t, Mapped_t], ok bool) {
 	if it, ok = self.dict[key]; ok {
 		CutList(it)
-		SetPrev(it, self.root)
+		where(it, self.root, less)
 		return it, false
 	}
 	it = &Value_t[Key_t, Mapped_t]{Key: key, Value: value()}
