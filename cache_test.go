@@ -6,9 +6,7 @@ package cache
 
 import (
 	"fmt"
-	"math/rand"
 	"testing"
-	"time"
 )
 
 func IntKey[Mapped_t any](a, b *Value_t[int, Mapped_t]) bool {
@@ -17,56 +15,6 @@ func IntKey[Mapped_t any](a, b *Value_t[int, Mapped_t]) bool {
 
 func IntKeyValue(a, b *Value_t[int, int]) bool {
 	return a.Value < b.Value
-}
-
-func Example_create10() {
-	cc := New[int, int]()
-	values := []int{0,1,1,2,3,3,3,4,5,6,7,8,9}
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(values), func(i, j int) {values[i], values[j] = values[j], values[i]})
-	for _, v := range values {
-		it, _ := cc.CreateFront(v, func() int { return v })
-		SortValueFront(it, cc.End(), IntKeyValue)
-	}
-	for it := cc.Front(); it != cc.End(); it = it.Next() {
-		fmt.Printf("%v %v\n", it.Key, it.Value)
-	}
-	// Output:
-	// 0 0
-	// 1 1
-	// 2 2
-	// 3 3
-	// 4 4
-	// 5 5
-	// 6 6
-	// 7 7
-	// 8 8
-	// 9 9
-}
-
-func Example_push10() {
-	cc := New[int, int]()
-	values := []int{0,1,1,2,3,3,3,4,5,6,7,8,9}
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(values), func(i, j int) {values[i], values[j] = values[j], values[i]})
-	for _, v := range values {
-		it, _ := cc.PushBack(v, func() int { return v })
-		SortValueBack(it, cc.End(), IntKeyValue)
-	}
-	for it := cc.Front(); it != cc.End(); it = it.Next() {
-		fmt.Printf("%v %v\n", it.Key, it.Value)
-	}
-	// Output:
-	// 9 9
-	// 8 8
-	// 7 7
-	// 6 6
-	// 5 5
-	// 4 4
-	// 3 3
-	// 2 2
-	// 1 1
-	// 0 0
 }
 
 func Example_sort10() {
