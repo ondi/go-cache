@@ -39,30 +39,12 @@ func SetNext[Key_t comparable, Mapped_t any](it, at *Value_t[Key_t, Mapped_t]) {
 }
 
 func Swap[Key_t comparable, Mapped_t any](a, b *Value_t[Key_t, Mapped_t]) {
-	if a.next == b {
-		a.prev.next = b
-		b.next.prev = a
-		b.prev = a.prev
-		a.prev = b
-		a.next = b.next
-		b.next = a
-		return
-	}
-	if a.prev == b {
-		a.next.prev = b
-		b.prev.next = a
-		b.next = a.next
-		a.next = b
-		a.prev = b.prev
-		b.prev = a
-		return
-	}
-	a.next.prev = b
-	a.prev.next = b
-	b.next.prev = a
-	b.prev.next = a
-	a.prev, b.prev = b.prev, a.prev
 	a.next, b.next = b.next, a.next
+	a.next.prev = a
+	b.next.prev = b
+	a.prev, b.prev = b.prev, a.prev
+	a.prev.next = a
+	b.prev.next = b
 }
 
 func MoveAfter[Key_t comparable, Mapped_t any](it, at *Value_t[Key_t, Mapped_t]) {
