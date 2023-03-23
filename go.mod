@@ -1,3 +1,3 @@
 module github.com/ondi/go-cache
 
-go 1.18
+go 1.20
