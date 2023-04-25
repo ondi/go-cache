@@ -30,31 +30,31 @@ func (self *Cache_t[Key_t, Mapped_t]) Clear() {
 	self.root.next = self.root
 }
 
-func (self *Cache_t[Key_t, Mapped_t]) CreateFront(key Key_t, value_new func(*Mapped_t), value_update func(*Mapped_t)) (it *Value_t[Key_t, Mapped_t], ok bool) {
+func (self *Cache_t[Key_t, Mapped_t]) CreateFront(key Key_t, value_init func(*Mapped_t), value_update func(*Mapped_t)) (it *Value_t[Key_t, Mapped_t], ok bool) {
 	if it, ok = self.dict[key]; ok {
 		value_update(&it.Value)
 		return it, false
 	}
 	it = &Value_t[Key_t, Mapped_t]{Key: key}
-	value_new(&it.Value)
+	value_init(&it.Value)
 	self.dict[key] = it
 	SetNext(it, self.root)
 	return it, true
 }
 
-func (self *Cache_t[Key_t, Mapped_t]) CreateBack(key Key_t, value_new func(*Mapped_t), value_update func(*Mapped_t)) (it *Value_t[Key_t, Mapped_t], ok bool) {
+func (self *Cache_t[Key_t, Mapped_t]) CreateBack(key Key_t, value_init func(*Mapped_t), value_update func(*Mapped_t)) (it *Value_t[Key_t, Mapped_t], ok bool) {
 	if it, ok = self.dict[key]; ok {
 		value_update(&it.Value)
 		return it, false
 	}
 	it = &Value_t[Key_t, Mapped_t]{Key: key}
-	value_new(&it.Value)
+	value_init(&it.Value)
 	self.dict[key] = it
 	SetPrev(it, self.root)
 	return it, true
 }
 
-func (self *Cache_t[Key_t, Mapped_t]) PushFront(key Key_t, value_new func(*Mapped_t), value_update func(*Mapped_t)) (it *Value_t[Key_t, Mapped_t], ok bool) {
+func (self *Cache_t[Key_t, Mapped_t]) PushFront(key Key_t, value_init func(*Mapped_t), value_update func(*Mapped_t)) (it *Value_t[Key_t, Mapped_t], ok bool) {
 	if it, ok = self.dict[key]; ok {
 		CutList(it)
 		SetNext(it, self.root)
@@ -62,13 +62,13 @@ func (self *Cache_t[Key_t, Mapped_t]) PushFront(key Key_t, value_new func(*Mappe
 		return it, false
 	}
 	it = &Value_t[Key_t, Mapped_t]{Key: key}
-	value_new(&it.Value)
+	value_init(&it.Value)
 	self.dict[key] = it
 	SetNext(it, self.root)
 	return it, true
 }
 
-func (self *Cache_t[Key_t, Mapped_t]) PushBack(key Key_t, value_new func(*Mapped_t), value_update func(*Mapped_t)) (it *Value_t[Key_t, Mapped_t], ok bool) {
+func (self *Cache_t[Key_t, Mapped_t]) PushBack(key Key_t, value_init func(*Mapped_t), value_update func(*Mapped_t)) (it *Value_t[Key_t, Mapped_t], ok bool) {
 	if it, ok = self.dict[key]; ok {
 		CutList(it)
 		SetPrev(it, self.root)
@@ -76,7 +76,7 @@ func (self *Cache_t[Key_t, Mapped_t]) PushBack(key Key_t, value_new func(*Mapped
 		return it, false
 	}
 	it = &Value_t[Key_t, Mapped_t]{Key: key}
-	value_new(&it.Value)
+	value_init(&it.Value)
 	self.dict[key] = it
 	SetPrev(it, self.root)
 	return it, true
